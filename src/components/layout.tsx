@@ -7,9 +7,9 @@ type Props = {
 
 export default function Layout({ children }: Props) {
   return (
-    <>
+    <main>
       <Navbar />
-      <main>{children}</main>
-    </>
+      {children}
+    </main>
   )
 }

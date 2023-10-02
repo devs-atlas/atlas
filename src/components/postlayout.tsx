@@ -1,9 +1,9 @@
-import { ReactNode } from 'react'
+import Layout from './layout'
 
 type Props = {
-  children: ReactNode
+  post: JSX.Element
 }
 
-export default function PostLayout({ children }: Props) {
-  return <>{children}</>
+export default function PostLayout({ post }: Props) {
+  return <Layout>{post}</Layout>
 }

@@ -1,10 +1,11 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import styles from './Navbar.module.css'
+import { raleway } from '~/styles/fonts'
 
 export default function Navbar() {
   return (
-    <ul className={styles.navbar}>
+    <ul className={`${styles.navbar} ${raleway.className}`}>
       <li className={styles.navItem}>
         <div className={styles.icon}>
           <Image
