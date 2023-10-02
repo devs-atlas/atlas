@@ -1,14 +1,23 @@
-import fs from 'fs'
-import path from 'path'
+import { VQGan, meta } from '~/posts/vqgan'
 
-const postsDirectory = path.join(process.cwd(), 'posts')
+export const postMapping = new Map([
+  [
+    'vqgan',
+    {
+      post: VQGan,
+      meta,
+    },
+  ],
+])
+
+export function getAllPostMeta() {
+  return Array.from(postMapping.keys()).map((id) => ({
+    meta: postMapping.get(id)!.meta,
+  }))
+}
 
 export function getAllPostIds() {
-  const fileNames = fs.readdirSync(postsDirectory)
-
-  return fileNames.map((fileName) => ({
-    params: {
-      id: fileName.replace(/\.tsx$/, ''),
-    },
+  return Array.from(postMapping.keys()).map((id) => ({
+    params: { id },
   }))
 }
