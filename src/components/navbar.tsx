@@ -1,11 +1,11 @@
 import Image from 'next/image'
 import Link from 'next/link'
+import { fragment } from '~/styles/fonts'
 import styles from './Navbar.module.css'
-import { raleway } from '~/styles/fonts'
 
 export default function Navbar() {
   return (
-    <ul className={`${styles.navbar} ${raleway.className}`}>
+    <ul className={`${styles.navbar} ${fragment.className}`}>
       <li className={styles.navItem}>
         <div className={styles.icon}>
           <Image

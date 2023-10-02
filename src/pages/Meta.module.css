@@ -1,0 +1,25 @@
+.meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid grey;
+}
+
+.metaContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.metaTitle {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.metaDescription {
+  font-size: 17px;
+  margin: 0;
+}
+
