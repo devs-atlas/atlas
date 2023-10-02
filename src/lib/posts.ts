@@ -10,9 +10,20 @@ export const postMapping = new Map([
   ],
 ])
 
+export type PostMeta = {
+  title: string
+  id: string
+  description: string
+  date: string
+  image: JSX.Element
+}
+
 export function getAllPostMeta() {
   return Array.from(postMapping.keys()).map((id) => ({
-    meta: postMapping.get(id)!.meta,
+    meta: {
+      id,
+      ...postMapping.get(id)!.meta,
+    },
   }))
 }
 
