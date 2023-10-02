@@ -14,13 +14,8 @@
 .navItem {
   display: flex;
   align-items: center;
-  color: rgba(255, 255, 255, 0.8);
   font-size: 17px;
   text-decoration: none;
-}
-
-.navItem:hover {
-  color: rgba(255, 255, 255, 1);
 }
 
 .icon {
