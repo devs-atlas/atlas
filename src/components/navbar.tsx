@@ -15,6 +15,7 @@ export default function Navbar() {
             width={20}
             height={20}
           />
+          {/* TODO: use new icon */}
           <Link href="/">atlas</Link>
         </div>
       </li>
