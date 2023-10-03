@@ -1,0 +1,17 @@
+.separator {
+  height: 1px;
+  background-color: black;
+  margin: 50px 0;
+  position: relative;
+}
+
+.circle {
+  position: absolute;
+  top: -4px;
+  width: 8px;
+  height: 8px;
+  border: 1px solid black;
+  border-radius: 50%;
+  background-color: white;
+  left: calc(var(--circle-index, 0) * 100%);
+}

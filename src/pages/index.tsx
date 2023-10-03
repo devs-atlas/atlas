@@ -3,6 +3,7 @@ import Layout from '~/components/layout'
 
 import Link from 'next/link'
 import { Fragment } from 'react'
+import { Separator } from '~/components/separator'
 import type { PostMeta } from '~/lib/posts'
 import { getAllPostMeta } from '~/lib/posts'
 import { manrope } from '~/styles/fonts'
@@ -22,30 +23,6 @@ function Meta({ id, title, description, date, image }: PostMeta) {
     </Link>
   )
 }
-
-const Circles = ({ numCircles }: { numCircles: number }) => {
-  return (
-    <>
-      {Array.from({ length: numCircles }).map((_, i) => (
-        <div
-          key={i}
-          className={styles.circle}
-          // @ts-ignore
-          style={{ '--circle-index': i / (numCircles - 1) }}
-        ></div>
-      ))}
-    </>
-  )
-}
-
-const Separator = ({ numCircles }: { numCircles: number }) => {
-  return (
-    <div className={styles.separator}>
-      <Circles numCircles={numCircles} />
-    </div>
-  )
-}
-
 const allPostMeta = getAllPostMeta()
 
 export default function Home() {
@@ -54,7 +31,9 @@ export default function Home() {
       {allPostMeta.map(({ meta }, index) => (
         <Fragment key={meta.title}>
           <Meta {...meta} />
-          {index < allPostMeta.length - 1 && <Separator numCircles={5} />}
+          {index < allPostMeta.length - 1 && (
+            <Separator numCircles={5} width="50%" />
+          )}
         </Fragment>
       ))}
     </Layout>
