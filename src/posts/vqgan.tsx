@@ -3,12 +3,10 @@ import Code from '~/components/code'
 import Date from '~/components/date'
 import { Eq, Latex } from '~/components/latex'
 import { Separator } from '~/components/separator'
-import type { PostMeta } from '~/lib/posts'
 import { fragment, garamond } from '~/styles/fonts'
 
 const integral = `f(x) = \\int_{-\\infty}^\\infty\\hat f(\\xi)\\,e^{2\\pi i\\xi x}\\,d\\xi`
 const snippets = new Map([
-  // TODO: better sol'n
   [
     'get_batch',
     `def get_batch(data, context_length, batch_size):
@@ -82,7 +80,7 @@ export function VQGan() {
   )
 }
 
-export const meta: PostMeta = {
+export const meta = {
   title: 'VQ-GAN From the Bottom Up',
   id: 'vqgan',
   description:

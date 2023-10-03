@@ -19,6 +19,7 @@ type SeparatorProps = {
   numCircles: number
   width: string
 }
+
 export const Separator = ({ numCircles, width }: SeparatorProps) => {
   return (
     <div className={styles.separator} style={{ width: width }}>

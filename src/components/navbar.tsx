@@ -10,7 +10,7 @@ export default function Navbar() {
         <div className={styles.icon}>
           <Image
             priority
-            src="/icon.png"
+            src="/icon.webp"
             alt="atlas icon"
             width={50}
             height={50}

@@ -23,9 +23,10 @@ function Meta({ id, title, description, date, image }: PostMeta) {
     </Link>
   )
 }
-const allPostMeta = getAllPostMeta()
 
 export default function Home() {
+  const allPostMeta = getAllPostMeta()
+
   return (
     <Layout>
       {allPostMeta.map(({ meta }, index) => (
