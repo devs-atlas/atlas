@@ -15,19 +15,18 @@
 }
 
 .metaTitle {
-  font-size: 24px;
+  font-size: 25px;
   font-weight: bold;
-  margin: 0;
 }
 
 .metaDescription {
-  font-size: 17px;
-  margin: 0;
+  font-size: 15px;
 }
 
 .metaDate {
   font-size: 14px;
   color: gray;
+  margin: 3px;
 }
 
 .separator {

@@ -3,10 +3,11 @@
   justify-content: space-between;
   align-items: center;
   background-color: hsl(200, 60%, 15%);
-  padding: 1em 2em;
+  padding: 1em 5em;
   width: 100%;
   box-sizing: border-box;
   color: white;
+  margin-bottom: 25px;
 }
 
 .navItem {
