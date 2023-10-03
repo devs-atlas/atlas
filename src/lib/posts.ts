@@ -1,14 +1,6 @@
 import { VQGan, meta } from '~/posts/vqgan'
 
-export const postMapping = new Map([
-  [
-    'vqgan',
-    {
-      post: VQGan,
-      meta,
-    },
-  ],
-])
+export const postMapping = new Map([['vqgan', { post: VQGan, meta }]])
 
 export type PostMeta = {
   title: string
@@ -20,10 +12,7 @@ export type PostMeta = {
 
 export function getAllPostMeta() {
   return Array.from(postMapping.keys()).map((id) => ({
-    meta: {
-      id,
-      ...postMapping.get(id)!.meta,
-    },
+    meta: postMapping.get(id)!.meta,
   }))
 }
 

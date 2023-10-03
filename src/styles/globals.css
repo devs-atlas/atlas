@@ -10,3 +10,54 @@ body,
 html {
   overflow-anchor: none;
 }
+
+/* Posts */
+
+p {
+  font-size: 18px;
+  line-height: 1.7;
+  margin: 15px 0;
+}
+
+.code,
+.latex {
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  width: max-content;
+  margin: 15px 0;
+}
+
+.latex {
+  font-size: 25px;
+}
+
+.code code {
+  text-align: left;
+  display: inline-block;
+}
+
+.postContainer {
+  margin: 75px auto;
+  max-width: 800px;
+}
+
+/* Post header */
+.headerContainer {
+  margin-bottom: 30px
+}
+
+.headerTitle {
+  font-size: 45px;
+  font-weight: bold;
+}
+
+.headerDate {
+  font-size: 15px;
+  color: gray;
+}
+
+.headerDescription {
+  font-size: 18px;
+}
