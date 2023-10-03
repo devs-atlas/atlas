@@ -14,9 +14,9 @@ function Meta({ id, title, description, date, image }: PostMeta) {
     <Link href={`/posts/${id}`}>
       <div className={`${styles.meta} ${fragment.className}`}>
         <div className={styles.metaContainer}>
-          <h2 className={styles.metaTitle}>{title}</h2>
+          <div className={styles.metaTitle}>{title}</div>
           <Date className={styles.metaDate} dateString={date} />
-          <p className={styles.metaDescription}>{description}</p>
+          <div className={styles.metaDescription}>{description}</div>
         </div>
         {image}
       </div>

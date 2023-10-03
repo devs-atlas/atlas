@@ -8,6 +8,7 @@ import { fragment, garamond } from '~/styles/fonts'
 
 const integral = `f(x) = \\int_{-\\infty}^\\infty\\hat f(\\xi)\\,e^{2\\pi i\\xi x}\\,d\\xi`
 const snippets = new Map([
+  // TODO: better sol'n
   [
     'get_batch',
     `def get_batch(data, context_length, batch_size):
@@ -36,6 +37,8 @@ export function VQGan() {
       </div>
       <Separator numCircles={5} width="100%" />
       <div className={garamond.className}>
+        <h1>An Incredibly Sophisticated Subtitle</h1>
+        <h2>An Even Better Sub-Subtitle</h2>
         <p>
           It&apos;s better to first understand the concept of language modeling
           generally rather than just in the transformer/GPT context--from now on

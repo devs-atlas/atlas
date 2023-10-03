@@ -23,7 +23,7 @@ export default function Code({ code, language }: CodeProps) {
   }, [code, language])
 
   return (
-    <pre>
+    <pre className="code">
       <code
         dangerouslySetInnerHTML={{ __html: highlightedCode ?? code }}
       ></code>

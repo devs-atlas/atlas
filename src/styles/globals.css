@@ -14,9 +14,19 @@ html {
 /* Posts */
 
 p {
-  font-size: 18px;
+  font-size: 19px;
   line-height: 1.7;
   margin: 15px 0;
+}
+
+h1 {
+  font-weight: bold;
+  font-size: 29px;
+}
+
+h2 {
+  font-size: 24px;
+  font-style: italic;
 }
 
 .code,
@@ -45,7 +55,7 @@ p {
 
 /* Post header */
 .headerContainer {
-  margin-bottom: 30px
+  margin-bottom: 30px;
 }
 
 .headerTitle {
@@ -54,10 +64,10 @@ p {
 }
 
 .headerDate {
-  font-size: 15px;
+  font-size: 16px;
   color: gray;
 }
 
 .headerDescription {
-  font-size: 18px;
+  font-size: 20px;
 }
