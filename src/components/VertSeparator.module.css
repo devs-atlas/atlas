@@ -1,0 +1,28 @@
+.vertSeparator {
+  width: 1px;
+  background-color: black;
+  height: 100px;
+  margin: 0 40px;
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.circle {
+  width: 10px;
+  height: 10px;
+  border: 1px solid black;
+  background-color: white;
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%);
+  border-radius: 50%;
+}
+
+.circle.top {
+  top: 0;
+}
+
+.circle.bottom {
+  bottom: 0;
+}
