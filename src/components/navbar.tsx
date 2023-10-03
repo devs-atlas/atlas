@@ -10,10 +10,10 @@ export default function Navbar() {
         <div className={styles.icon}>
           <Image
             priority
-            src="/icon.svg"
+            src="/icon.png"
             alt="atlas icon"
-            width={20}
-            height={20}
+            width={50}
+            height={50}
           />
           {/* TODO: use new icon */}
           <Link href="/">atlas</Link>
