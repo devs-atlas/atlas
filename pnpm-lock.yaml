@@ -41,9 +41,9 @@ dependencies:
   react-dom:
     specifier: 18.2.0
     version: 18.2.0(react@18.2.0)
-  react-mathjax:
-    specifier: ^1.0.1
-    version: 1.0.1(react@18.2.0)
+  react-mathjax2:
+    specifier: github:joshhales1/react-mathjax
+    version: github.com/joshhales1/react-mathjax/ec24361b5ca6d48552d189f3045be3ab444667f9(react@18.2.0)
   tailwindcss:
     specifier: 3.3.3
     version: 3.3.3
@@ -52,9 +52,6 @@ dependencies:
     version: 5.2.2
 
 devDependencies:
-  '@types/react-mathjax':
-    specifier: ^1.0.2
-    version: 1.0.2
   eslint-config-prettier:
     specifier: ^9.0.0
     version: 9.0.0(eslint@8.50.0)
@@ -286,6 +283,7 @@ packages:
 
   /@types/prop-types@15.7.6:
     resolution: {integrity: sha512-RK/kBbYOQQHLYj9Z95eh7S6t7gq4Ojt/NT8HTk8bWVhA5DaF+5SMnxHKkP4gPNN3wAZkKP+VjAf0ebtYzf+fxg==}
+    dev: false
 
   /@types/react-dom@18.2.7:
     resolution: {integrity: sha512-GRaAEriuT4zp9N4p1i8BDBYmEyfo+xQ3yHjJU4eiK5NDa1RmUZG+unZABUTK4/Ox/M+GaHwb6Ow8rUITrtjszA==}
@@ -293,21 +291,17 @@ packages:
       '@types/react': 18.2.22
     dev: false
 
-  /@types/react-mathjax@1.0.2:
-    resolution: {integrity: sha512-L2nNZQBFkJycmysIv2zDDk2Kzch2iJHlGb/zxMK11lwM3Y3VaPX7p/0Rlpzm8gHVtMzpVvQqavfqTtJqU0aSZw==}
-    dependencies:
-      '@types/react': 18.2.22
-    dev: true
-
   /@types/react@18.2.22:
     resolution: {integrity: sha512-60fLTOLqzarLED2O3UQImc/lsNRgG0jE/a1mPW9KjMemY0LMITWEsbS4VvZ4p6rorEHd5YKxxmMKSDK505GHpA==}
     dependencies:
       '@types/prop-types': 15.7.6
       '@types/scheduler': 0.16.3
       csstype: 3.1.2
+    dev: false
 
   /@types/scheduler@0.16.3:
     resolution: {integrity: sha512-5cJ8CB4yAx7BH1oMvdU0Jh9lrEXyPkar6F9G/ERswkCuvP4KQZfZkSjcMbAICCpQTN4OuZn8tz0HiKv9TGZgrQ==}
+    dev: false
 
   /@typescript-eslint/parser@6.7.2(eslint@8.50.0)(typescript@5.2.2):
     resolution: {integrity: sha512-KA3E4ox0ws+SPyxQf9iSI25R6b4Ne78ORhNHeVKrPQnoYsb9UhieoiRoJgrzgEeKGOXhcY1i8YtOeCHHTDa6Fw==}
@@ -664,6 +658,7 @@ packages:
 
   /csstype@3.1.2:
     resolution: {integrity: sha512-I7K1Uu0MBPzaFKg4nI5Q7Vs2t+3gWWW648spaF+Rg7pI9ds18Ugn+lvg4SHczUdKlHI5LWBXyqfS8+DufyBsgQ==}
+    dev: false
 
   /damerau-levenshtein@1.0.8:
     resolution: {integrity: sha512-sdQSFB7+llfUcQHUQO3+B8ERRj0Oa4w9POWMI/puGtuf7gFywGmkaLCElnudfTiKZV+NvHqL0ifzdrI8Ro7ESA==}
@@ -2053,15 +2048,6 @@ packages:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
     dev: false
 
-  /react-mathjax@1.0.1(react@18.2.0):
-    resolution: {integrity: sha512-+mjFcciZY3GQoqiQm3aRTyDjgBKuoaXpY+SCONX00jScuPpTKwnASeFMS5+pbTIzDf5zPT2Y9ZZfQ9U/d4CKtQ==}
-    peerDependencies:
-      react: ^16.3.0
-    dependencies:
-      load-script: 1.0.0
-      react: 18.2.0
-    dev: false
-
   /react@18.2.0:
     resolution: {integrity: sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==}
     engines: {node: '>=0.10.0'}
@@ -2572,4 +2558,17 @@ packages:
 
   /zod@3.21.4:
     resolution: {integrity: sha512-m46AKbrzKVzOzs/DZgVnG5H55N1sv1M8qZU3A8RIKbs3mrACDNeIOeilDymVb2HdmP8uwshOCF4uJ8uM9rCqJw==}
+    dev: false
+
+  github.com/joshhales1/react-mathjax/ec24361b5ca6d48552d189f3045be3ab444667f9(react@18.2.0):
+    resolution: {tarball: https://codeload.github.com/joshhales1/react-mathjax/tar.gz/ec24361b5ca6d48552d189f3045be3ab444667f9}
+    id: github.com/joshhales1/react-mathjax/ec24361b5ca6d48552d189f3045be3ab444667f9
+    name: react-mathjax2
+    version: 0.0.2
+    peerDependencies:
+      react: ^16.0.0
+    dependencies:
+      load-script: 1.0.0
+      prop-types: 15.8.1
+      react: 18.2.0
     dev: false
