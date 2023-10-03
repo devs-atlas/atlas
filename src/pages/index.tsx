@@ -2,6 +2,7 @@ import Date from '~/components/date'
 import Layout from '~/components/layout'
 
 import Link from 'next/link'
+import { Fragment } from 'react'
 import type { PostMeta } from '~/lib/posts'
 import { getAllPostMeta } from '~/lib/posts'
 import { manrope } from '~/styles/fonts'
@@ -13,8 +14,7 @@ function Meta({ id, title, description, date, image }: PostMeta) {
       <div className={`${styles.meta} ${manrope.className}`}>
         <div className={styles.metaContainer}>
           <h2 className={styles.metaTitle}>{title}</h2>
-          <h3 className={styles.metaDate}>{date}</h3>
-          <Date dateString={date} />
+          <Date className={styles.metaDate} dateString={date} />
           <p className={styles.metaDescription}>{description}</p>
         </div>
         {image}
@@ -23,11 +23,39 @@ function Meta({ id, title, description, date, image }: PostMeta) {
   )
 }
 
+const Circles = ({ numCircles }: { numCircles: number }) => {
+  return (
+    <>
+      {Array.from({ length: numCircles }).map((_, i) => (
+        <div
+          key={i}
+          className={styles.circle}
+          // @ts-ignore
+          style={{ '--circle-index': i / (numCircles - 1) }}
+        ></div>
+      ))}
+    </>
+  )
+}
+
+const Separator = ({ numCircles }: { numCircles: number }) => {
+  return (
+    <div className={styles.separator}>
+      <Circles numCircles={numCircles} />
+    </div>
+  )
+}
+
+const allPostMeta = getAllPostMeta()
+
 export default function Home() {
   return (
     <Layout>
-      {getAllPostMeta().map(({ meta }) => (
-        <Meta key={meta.title} {...meta} />
+      {allPostMeta.map(({ meta }, index) => (
+        <Fragment key={meta.title}>
+          <Meta {...meta} />
+          {index < allPostMeta.length - 1 && <Separator numCircles={5} />}
+        </Fragment>
       ))}
     </Layout>
   )
