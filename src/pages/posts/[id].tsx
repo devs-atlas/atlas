@@ -11,6 +11,7 @@ type PostProps = {
 }
 
 export default function Post({ id, snippets }: PostProps) {
+  console.log(postMeta)
   const meta = postMeta.get(id)
 
   if (!meta) {
