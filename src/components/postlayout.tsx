@@ -8,7 +8,7 @@ type PostProps = {
 }
 
 const VQgan = dynamic(() => import('~/_posts/vqgan'), {
-  ssr: false,
+  ssr: true,
 })
 
 export default function PostLayout({ meta, snippets }: PostProps) {
