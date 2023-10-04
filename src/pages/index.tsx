@@ -6,7 +6,6 @@ import type { PostMeta } from '~/lib/posts'
 import { postMeta } from '~/lib/posts'
 import { fragment } from '~/styles/fonts'
 import styles from './Meta.module.css'
-import { Separator } from '~/components/separator'
 
 type MetaProps = {
   meta: PostMeta
