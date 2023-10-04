@@ -20,9 +20,10 @@ export default function About() {
           <div className={`${styles.profileTextContainer}`}>
             <div className={`${styles.name}`}>Nicholas Hoffs</div>
             <div className={`${styles.profileText}`}>
-              Nicholas is a second year studying Computer Science at the
-              University of Virginia. He specializes in transformers and time
-              series forecasting and is the brains behind atlas.
+              Nicholas is a second-year student in the University of Virginia’s
+              Engineering School. He’s interested in mechanistic
+              interpretability, generative sequence models (such as GPT), and
+              the “theory of deep learning”.
             </div>
           </div>
         </div>
@@ -37,7 +38,7 @@ export default function About() {
           <div className={`${styles.profileTextContainer}`}>
             <div className={`${styles.name}`}>Barrett Ruth</div>
             <div className={`${styles.profileText}`}>
-              Barrett is a second year studying Computer Science and Economics
+              Barrett is a second-year studying Computer Science and Economics
               at the University of Virginia. He is passionate about writing
               efficient, clean software and the open source community. View his
               website{' '}
