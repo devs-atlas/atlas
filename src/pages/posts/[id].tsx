@@ -11,7 +11,6 @@ type PostProps = {
 }
 
 export default function Post({ id, snippets }: PostProps) {
-  console.log(postMeta)
   const meta = postMeta.get(id)
 
   if (!meta) {
@@ -51,6 +50,6 @@ export async function getStaticPaths() {
 
   return {
     paths,
-    fallback: false,
+    fallback: true,
   }
 }
