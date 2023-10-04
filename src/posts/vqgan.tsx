@@ -1,26 +1,18 @@
-import Image from 'next/image'
 import Code from '~/components/code'
 import Date from '~/components/date'
 import { Eq, Latex } from '~/components/latex'
 import { Separator } from '~/components/separator'
+import type { PostMeta, Snippets } from '~/lib/posts'
 import { fragment, garamond } from '~/styles/fonts'
 
 const integral = `f(x) = \\int_{-\\infty}^\\infty\\hat f(\\xi)\\,e^{2\\pi i\\xi x}\\,d\\xi`
-const snippets = new Map([
-  [
-    'get_batch',
-    `def get_batch(data, context_length, batch_size):
-    ix = torch.randint(0,len(data)-context_length-1, (batch_size,))
-    x = torch.stack([torch.tensor(data[i:i+context_length], dtype=torch.long) for i in ix])
-    y = torch.stack([torch.tensor(data[i+1:i+1+context_length], dtype=torch.long) for i in ix])
-    return x,y # y is one-step right shifted version of x, same size
 
-get_batch(train_data,64,32)[0].shape #(B,T)
-`,
-  ],
-])
+type PostProps = {
+  meta: PostMeta
+  snippets: Snippets
+}
 
-export function VQGan() {
+export default function VQGan({ meta, snippets }: PostProps) {
   return (
     <div className="postContainer">
       <div className="headerContainer">
@@ -70,7 +62,7 @@ export function VQGan() {
           words(x)&rarr;sequence of words(y)` mapping, not just `sequence of
           words(x) &rarr; word(y)`
         </p>
-        <Code code={snippets.get('get_batch') ?? ''} language={'python'} />
+        <Code code={snippets['get_batch.py']} />
         <p>More Machine learning bullshit with a code block above.</p>
         <p>More Machine learning bullshit with a code block above.</p>
         <p>More Machine learning bullshit with a code block above.</p>
@@ -78,22 +70,4 @@ export function VQGan() {
       </div>
     </div>
   )
-}
-
-export const meta = {
-  title: 'VQ-GAN From the Bottom Up',
-  id: 'vqgan',
-  description:
-    'A foundational, scalable, generative architecture for unstructured data.',
-  date: '2023-02-10',
-  image: (
-    <Image
-      src="/posts/vqgan/preview.png"
-      width={300}
-      height={200}
-      alt="placeholder"
-      style={{ width: 'auto', height: 'auto' }}
-      priority
-    />
-  ),
 }

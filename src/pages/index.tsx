@@ -2,41 +2,36 @@ import Date from '~/components/date'
 import Layout from '~/components/layout'
 
 import Link from 'next/link'
-import { Fragment } from 'react'
-import { Separator } from '~/components/separator'
 import type { PostMeta } from '~/lib/posts'
-import { getAllPostMeta } from '~/lib/posts'
+import { postMeta } from '~/lib/posts'
 import { fragment } from '~/styles/fonts'
 import styles from './Meta.module.css'
+import { Separator } from '~/components/separator'
 
-function Meta({ id, title, description, date, image }: PostMeta) {
+type MetaProps = {
+  meta: PostMeta
+}
+
+function Meta({ meta }: MetaProps) {
   return (
-    <Link href={`/posts/${id}`}>
+    <Link href={`/posts/${meta.id}`}>
       <div className={`${styles.meta} ${fragment.className}`}>
         <div className={styles.metaContainer}>
-          <div className={styles.metaTitle}>{title}</div>
-          <Date className={styles.metaDate} dateString={date} />
-          <div className={styles.metaDescription}>{description}</div>
+          <div className={styles.metaTitle}>{meta.title}</div>
+          <Date className={styles.metaDate} dateString={meta.date} />
+          <div className={styles.metaDescription}>{meta.description}</div>
         </div>
-        {image}
+        {meta.image}
       </div>
     </Link>
   )
 }
 
 export default function Home() {
-  const allPostMeta = getAllPostMeta()
-
   return (
     <Layout>
-      {allPostMeta.map(({ meta }, index) => (
-        <Fragment key={meta.title}>
-          <Meta {...meta} />
-          {index < allPostMeta.length - 1 && (
-            <Separator numCircles={5} width="50%" />
-          )}
-        </Fragment>
-      ))}
+      <Meta meta={postMeta.get('vqgan')!} />
+      {/* <Separator numCircles={5} width="50%" /> */}
     </Layout>
   )
 }

@@ -1,9 +1,20 @@
+import dynamic from 'next/dynamic'
 import Layout from './layout'
+import type { PostMeta, Snippets } from '~/lib/posts'
 
-type Props = {
-  post: () => JSX.Element
+type PostProps = {
+  meta: PostMeta
+  snippets: Snippets
 }
 
-export default function PostLayout({ post }: Props) {
-  return <Layout>{post()}</Layout>
+const VQgan = dynamic(() => import('~/posts/vqgan'), {
+  ssr: false,
+})
+
+export default function PostLayout({ meta, snippets }: PostProps) {
+  return (
+    <Layout>
+      {meta.id === 'vqgan' && <VQgan meta={meta} snippets={snippets} />}
+    </Layout>
+  )
 }
