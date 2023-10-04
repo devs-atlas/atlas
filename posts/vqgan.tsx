@@ -63,10 +63,6 @@ export default function VQGan({ meta, snippets }: PostProps) {
           words(x) &rarr; word(y)`
         </p>
         <Code code={snippets['get_batch.py']} />
-        <p>More Machine learning bullshit with a code block above.</p>
-        <p>More Machine learning bullshit with a code block above.</p>
-        <p>More Machine learning bullshit with a code block above.</p>
-        <p>More Machine learning bullshit with a code block above.</p>
       </div>
     </div>
   )
