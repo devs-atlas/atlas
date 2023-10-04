@@ -15,12 +15,11 @@ export default function Navbar() {
             width={50}
             height={50}
           />
-          {/* TODO: use new icon */}
           <Link href="/">atlas</Link>
         </div>
       </li>
       <li className={styles.navItem}>
-        <Link href="/about" prefetch>
+        <Link href="/about">
           about
         </Link>
       </li>
