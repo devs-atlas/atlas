@@ -20,7 +20,9 @@ export default function Navbar() {
         </div>
       </li>
       <li className={styles.navItem}>
-        <Link href="/about">about</Link>
+        <Link href="/about" prefetch>
+          about
+        </Link>
       </li>
     </ul>
   )
