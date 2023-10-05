@@ -9,7 +9,6 @@ export default function Navbar() {
       <li className={styles.navItem}>
         <div className={styles.icon}>
           <Image
-            priority
             src="/icon.webp"
             alt="atlas icon"
             width={50}

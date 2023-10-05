@@ -26,7 +26,6 @@ postMeta.set('vqgan', {
       height={200}
       alt="placeholder"
       style={{ width: 'auto', height: 'auto' }}
-      priority
     />
   ),
 })
