@@ -1,8 +1,8 @@
 import Code from '~/components/code'
 import Date from '~/components/date'
-import { Eq, Latex } from '~/components/latex'
-import type { PostMeta, Snippets } from '~/lib/posts'
+import { Latex } from '~/components/latex'
 import { Separator } from '~/components/separator'
+import type { PostMeta, Snippets } from '~/lib/posts'
 import { fragment, garamond } from '~/styles/fonts'
 
 const integral = `f(x) = \\int_{-\\infty}^\\infty\\hat f(\\xi)\\,e^{2\\pi i\\xi x}\\,d\\xi`
@@ -53,9 +53,7 @@ export default function VQGan({ meta, snippets }: PostProps) {
           think of it like any other function `f` that takes in an input `x` and
           maps it to `y`, but a much, much longer formula.
         </p>
-        <Latex>
-          <Eq>{integral}</Eq>
-        </Latex>
+        <Latex>{integral}</Latex>
         <p>
           But ChatGPT is already trained. When the model is first learning to do
           the mapping(training), it is actually doing a `sequence of

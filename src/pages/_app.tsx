@@ -1,3 +1,4 @@
+import { MathJaxContext } from 'better-react-mathjax'
 import hljs from 'highlight.js/lib/core'
 import javascript from 'highlight.js/lib/languages/javascript'
 import python from 'highlight.js/lib/languages/python'
@@ -10,7 +11,11 @@ import type { AppProps } from 'next/app'
 import '~/styles/globals.css'
 
 const App = ({ Component, pageProps }: AppProps) => {
-  return <Component {...pageProps} />
+  return (
+    <MathJaxContext>
+      <Component {...pageProps} />
+    </MathJaxContext>
+  )
 }
 
 export default App

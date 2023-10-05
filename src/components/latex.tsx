@@ -1,5 +1,5 @@
 import { ReactNode } from 'react'
-import MathJax from 'react-mathjax2'
+import { MathJax } from 'better-react-mathjax'
 
 type LatexProps = {
   children: ReactNode
@@ -8,9 +8,7 @@ type LatexProps = {
 export function Latex({ children }: LatexProps) {
   return (
     <div className="latex">
-      <MathJax.Context input="tex">{children}</MathJax.Context>
+      <MathJax>{`\\(${children}\\)`}</MathJax>
     </div>
   )
 }
-
-export const Eq = MathJax.Node
