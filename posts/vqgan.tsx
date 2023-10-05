@@ -1,8 +1,8 @@
 import Code from '~/components/code'
 import Date from '~/components/date'
 import { Eq, Latex } from '~/components/latex'
-import { Separator } from '~/components/separator'
 import type { PostMeta, Snippets } from '~/lib/posts'
+import { Separator } from '~/components/separator'
 import { fragment, garamond } from '~/styles/fonts'
 
 const integral = `f(x) = \\int_{-\\infty}^\\infty\\hat f(\\xi)\\,e^{2\\pi i\\xi x}\\,d\\xi`
