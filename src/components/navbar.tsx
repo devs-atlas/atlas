@@ -8,19 +8,20 @@ export default function Navbar() {
     <ul className={`${styles.navbar} ${fragment.className}`}>
       <li className={styles.navItem}>
         <div className={styles.icon}>
-          <Image
-            src="/icon.webp"
-            alt="atlas icon"
-            width={50}
-            height={50}
-          />
+          <div className="aspect-ratio-box">
+            <Image
+              src="/icon.webp"
+              alt="atlas icon"
+              width={50}
+              height={50}
+              priority={true}
+            />
+          </div>
           <Link href="/">atlas</Link>
         </div>
       </li>
       <li className={styles.navItem}>
-        <Link href="/about">
-          about
-        </Link>
+        <Link href="/about">about</Link>
       </li>
     </ul>
   )

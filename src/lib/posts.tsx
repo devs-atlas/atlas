@@ -1,11 +1,16 @@
-import Image from 'next/image'
-
 export type PostMeta = {
   title: string
   id: string
   description: string
   date: string
-  image: JSX.Element
+  image: ImageProps
+}
+
+type ImageProps = {
+  src: string
+  width: number
+  height: number
+  alt: string
 }
 
 export type Snippets = {
@@ -19,15 +24,12 @@ postMeta.set('vqgan', {
   description:
     'A foundational, scalable, generative architecture for unstructured data.',
   date: '2023-02-10',
-  image: (
-    <Image
-      src="/posts/vqgan/preview.png"
-      width={300}
-      height={200}
-      alt="placeholder"
-      style={{ width: 'auto', height: 'auto' }}
-    />
-  ),
+  image: {
+    src: '/posts/vqgan/preview.png',
+    width: 300,
+    height: 200,
+    alt: 'placeholder',
+  } satisfies ImageProps,
 })
 
 export function getAllPostIds() {
