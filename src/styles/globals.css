@@ -61,6 +61,19 @@ li {
   margin: 15px 0;
 }
 
+.code-img-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  left: auto;
+  transform: none;
+}
+
+.code-img {
+  margin-left: 170px;
+  width: auto;
+}
+
 .latex {
   font-size: 25px;
 }

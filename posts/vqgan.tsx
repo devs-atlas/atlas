@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import { useEffect } from 'react'
 import Code from '~/components/code'
 import Date from '~/components/date'
@@ -309,7 +310,16 @@ export default function VQGan({ meta, snippets }: PostProps) {
         <Code code={snippets['language_model.py']} />
         <Code code={snippets['losses_1.py']} />
         {/* TODO: show image in between */}
-        <Code code={snippets['word_embeddings.py']} />
+        <div className="code-img-wrapper">
+          <Code code={snippets['word_embeddings.py']} />
+          <Image
+            className="code-img"
+            src="/posts/vqgan/word_embeddings.webp"
+            alt="Graph of word embeddings versus dimensions"
+            width={500}
+            height={500}
+          />
+        </div>
         <p>We can also make it generate text</p>
         <Code code={snippets['text.py']} />
         {/* TODO: add pre code showing output here */}
