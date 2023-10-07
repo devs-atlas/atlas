@@ -384,7 +384,7 @@ export default function VQGan({ meta, snippets }: PostProps) {
         <Code code={snippets['losses_2.py']} />
         <Code code={snippets['generate_sequence.py']} />
         {/* TODO: find clean way to display the last output*/}
-        <h2>Boom</h2>
+        <h1>Boom</h1>
         <p>
           That's all there is to GPTs! With the intuition and technical
           knowledge you've got now, you should be able to understand new

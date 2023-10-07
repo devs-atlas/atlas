@@ -43,6 +43,7 @@ h1 {
 h2 {
   font-size: 28px;
   font-weight: bold;
+  margin: 15px 0;
 }
 
 li {
@@ -64,13 +65,21 @@ li {
   font-size: 25px;
 }
 
-.code code {
+.code {
   text-align: left;
   display: inline-block;
   padding: 15px;
   margin: 10px 0;
   border: 1px solid #ccc;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.code .output {
+  padding: 10px;
+  margin: 15px 0px 5px 0;
+  border: 1px solid #ddd;
+  width: 100%;
+  background-color: #f9f9f9;
 }
 
 .postContainer {

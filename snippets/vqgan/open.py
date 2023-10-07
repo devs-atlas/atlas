@@ -3,4 +3,5 @@ with open("../data/shake.txt", "r") as f:
 
 len(data), data[:50]
 
-# (1115394, 'First Citizen:\nBefore we proceed any further, hear')
+# SNIPPET #
+(1115394, 'First Citizen:\nBefore we proceed any further, hear')

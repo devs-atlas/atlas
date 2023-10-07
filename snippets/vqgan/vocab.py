@@ -3,5 +3,5 @@ vocab = sorted(list(set(data)))
 vocab_size = len(vocab)
 
 len(vocab), vocab[:10]
-
-# (65, ['\n', ' ', '!', '$', '&', "'", ',', '-', '.', '3'])
+# SNIPPET #
+(65, ['\n', ' ', '!', '$', '&', "'", ',', '-', '.', '3'])

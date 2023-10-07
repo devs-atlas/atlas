@@ -11,4 +11,5 @@ decode = lambda x: [itoc[i] for i in x]
 
 encode("hello"), decode(encode("hello"))
 
-# ([46, 43, 50, 50, 53], ['h', 'e', 'l', 'l', 'o'])
+# SNIPPET #
+([46, 43, 50, 50, 53], ['h', 'e', 'l', 'l', 'o'])

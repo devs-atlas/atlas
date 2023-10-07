@@ -14,7 +14,7 @@ type ImageProps = {
 }
 
 export type Snippets = {
-  [key: string]: string
+  [key: string]: string[]
 }
 
 export const postMeta = new Map<string, PostMeta>()

@@ -2,7 +2,8 @@ import { readFileSync, readdirSync } from 'fs'
 import path from 'path'
 import PostLayout from '~/components/postlayout'
 import { highlight } from '~/lib/highlight'
-import { Snippets, getAllPostIds, postMeta } from '~/lib/posts'
+import type { Snippets } from '~/lib/posts'
+import { getAllPostIds, postMeta } from '~/lib/posts'
 import _404 from '~/pages/404'
 
 type PostProps = {
@@ -30,11 +31,16 @@ export async function getStaticProps({ params }: StaticProps) {
   const snippetFiles = `${snippetDir}/${params.id}`
 
   readdirSync(snippetFiles).forEach((snippetFile) => {
-    const snippetContents = readFileSync(
+    const [snippetContents, output] = readFileSync(
       `${snippetFiles}/${snippetFile}`
-    ).toString('utf-8')
+    )
+      .toString('utf-8')
+      .split('# SNIPPET #')
+      .map((e) => e.trim())
 
-    snippets[snippetFile] = highlight(snippetContents)
+    const highlightedCode = highlight(snippetContents)
+
+    snippets[snippetFile] = [highlightedCode, output || '']
   })
 
   return {
