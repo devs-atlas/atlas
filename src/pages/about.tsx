@@ -56,3 +56,8 @@ export default function About() {
     </Layout>
   )
 }
+
+// make server side
+export async function getServerSideProps() {
+  return { props: {} }
+}

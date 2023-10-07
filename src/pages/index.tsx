@@ -35,21 +35,17 @@ function Meta({ meta }: MetaProps) {
   )
 }
 
-type HomeProps = {
-  meta: PostMeta
-}
-
-export default function Home({ meta }: HomeProps) {
+export default function Home() {
+  const meta = postMeta.get('vqgan')
   return (
     <Layout>
-      <Meta meta={meta} />
+      <Meta meta={meta!} />
       {/* <Separator numCircles={5} width="50%" /> */}
     </Layout>
   )
 }
 
+// make server side
 export async function getServerSideProps() {
-  const meta = postMeta.get('vqgan')
-
-  return { props: { meta } }
+  return { props: {} }
 }
