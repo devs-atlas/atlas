@@ -1,9 +1,9 @@
 import Image from 'next/image'
-import { useEffect } from 'react'
 import Code from '~/components/code'
 import Date from '~/components/date'
 import { Separator } from '~/components/separator'
 import type { PostMeta, Snippets } from '~/lib/posts'
+import useInlineCodeStyling from '~/lib/useInlineCodeStyling'
 import { fragment, garamond } from '~/styles/fonts'
 
 type PostProps = {
@@ -12,17 +12,7 @@ type PostProps = {
 }
 
 export default function VQGan({ meta, snippets }: PostProps) {
-  // TODO: extract to hook
-  useEffect(() => {
-    const elements = document.querySelectorAll('.post-content') // Adjust the selector as needed
-
-    elements.forEach((el) => {
-      el.innerHTML = el.innerHTML.replace(
-        /`([^`]+)`/g,
-        '<span class="inline-code">$1</span>'
-      )
-    })
-  }, [])
+  useInlineCodeStyling()
 
   return (
     <div className="postContainer">

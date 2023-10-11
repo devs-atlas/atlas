@@ -24,7 +24,6 @@ p {
   border: 1px solid #ccc;
   border-radius: 3px;
   padding: 2px 3px;
-
   /* NOTE: monospace fonts usually too large */
   font-family: monospace;
   font-size: 15px;
