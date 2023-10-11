@@ -21,14 +21,12 @@ export default function Post({ id, snippets }: PostProps) {
   return <PostLayout meta={meta} snippets={snippets} />
 }
 
-const snippetDir = path.join(process.cwd(), 'snippets')
-
 type StaticProps = { params: { id: string } }
 
 export async function getStaticProps({ params }: StaticProps) {
   const snippets: Snippets = {}
 
-  const snippetFiles = `${snippetDir}/${params.id}`
+  const snippetFiles = path.join(process.cwd(), 'posts', params.id, 'snippets')
 
   readdirSync(snippetFiles).forEach((snippetFile) => {
     const [snippetContents, output] = readFileSync(

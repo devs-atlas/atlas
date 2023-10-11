@@ -60,6 +60,12 @@ li {
   margin: 15px 0;
 }
 
+.diagram-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .code-img-wrapper {
   display: flex;
   justify-content: center;
