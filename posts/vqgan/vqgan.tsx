@@ -5,6 +5,7 @@ import { Separator } from '~/components/separator'
 import type { PostMeta, Snippets } from '~/lib/posts'
 import useInlineCodeStyling from '~/lib/useInlineCodeStyling'
 import { fragment, garamond } from '~/styles/fonts'
+import SelfAttentionDiagram from './diagrams/SelfAttentionDiagram'
 
 type PostProps = {
   meta: PostMeta
@@ -32,6 +33,7 @@ export default function VQGan({ meta, snippets }: PostProps) {
           This tutorial is part one of a three(maybe four) part series on
           VQ-GAN, a generative image model.
         </p>
+        <SelfAttentionDiagram />
         <p>
           Even though the transformer is used to generate images in VQ-GAN, it's
           helpful to understand it on its own. Transformers have by-far the most

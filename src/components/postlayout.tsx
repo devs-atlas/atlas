@@ -7,7 +7,7 @@ type PostProps = {
   snippets: Snippets
 }
 
-const VQgan = dynamic(() => import('../../posts/vqgan'), {
+const VQgan = dynamic(() => import('../../posts/vqgan/vqgan'), {
   ssr: true,
 })
 
