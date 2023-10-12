@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 
 // replace all backticks surrounding phrases w/ inline code style
-const useInlineCodeStyling = (className: string = 'post-content') => {
+const useInlineCodeStyling = (className: string = 'postContainer') => {
   useEffect(() => {
     const elements = document.querySelectorAll(`.${className}`)
 

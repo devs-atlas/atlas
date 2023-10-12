@@ -8,7 +8,7 @@ const SelfAttentionDiagram = () => {
     const width = 400 - margin.left - margin.right
     const height = 400 - margin.top - margin.bottom
 
-    const svgContainer = d3.select('#self-attention .diagram')
+    const svgContainer = d3.select('#self-attention .content')
 
     if (!svgContainer.select('svg').empty()) {
       return
@@ -85,8 +85,8 @@ const SelfAttentionDiagram = () => {
   }, [])
 
   return (
-    <div id="self-attention" className="diagram-container">
-      <div className="diagram"></div>
+    <div id="self-attention" className="diagram">
+      <div className="content"></div>
       <div className="legend"></div>
     </div>
   )

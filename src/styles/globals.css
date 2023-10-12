@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+/* globals */
 body {
   overscroll-behavior-y: none;
   overscroll-behavior-x: none;
@@ -16,17 +17,7 @@ html {
 
 p {
   font-size: 19px;
-  margin: 15px 0;
-}
-
-.inline-code {
-  background-color: #f2f2f2;
-  border: 1px solid #ccc;
-  border-radius: 3px;
-  padding: 2px 3px;
-  /* NOTE: monospace fonts usually too large */
-  font-family: monospace;
-  font-size: 15px;
+  margin: 15px 0 !important;
 }
 
 p,
@@ -42,7 +33,51 @@ h1 {
 h2 {
   font-size: 28px;
   font-weight: bold;
-  margin: 15px 0;
+  margin: 15px 0 !important;
+}
+
+.postContainer {
+  margin-top: 30px;
+  margin-bottom: 50px;
+}
+
+.postContainer :not(img):not(pre):not(pre > *):not(.diagram):not(.diagram > *) {
+  margin: auto;
+  max-width: 800px;
+}
+
+.postContainer img,
+.postContainer pre,
+.postContainer diagram {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.inline-code {
+  background-color: #f2f2f2;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  padding: 2px 3px;
+  font-family: monospace;
+  font-size: 15px;
+}
+
+.code-img-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  gap: 50px;
+}
+
+/* Lists */
+
+ul,
+ol {
+  list-style-type: decimal;
+  font-size: 19px;
+  padding-left: 20px;
 }
 
 li {
@@ -50,83 +85,8 @@ li {
   list-style-position: inside;
 }
 
-.code,
-.latex {
-  position: relative;
-  left: 50%;
-  transform: translateX(-50%);
-  text-align: center;
-  width: max-content;
-  margin: 15px 0;
-}
-
-.diagram-container {
+.diagram {
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.code-img-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  left: auto;
-  transform: none;
-}
-
-.code-img {
-  margin-left: 170px;
-  width: auto;
-}
-
-.latex {
-  font-size: 25px;
-}
-
-.code {
-  text-align: left;
-  display: inline-block;
-  padding: 15px;
-  margin: 10px 0;
-  border: 1px solid #ccc;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.code .output {
-  padding: 10px;
-  margin: 15px 0px 5px 0;
-  border: 1px solid #ddd;
-  width: 100%;
-  background-color: #f9f9f9;
-}
-
-.postContainer {
-  margin: 75px auto;
-  max-width: 800px;
-}
-
-/* Post header */
-.headerContainer {
-  margin-bottom: 30px;
-}
-
-.headerTitle {
-  font-size: 45px;
-  font-weight: bold;
-}
-
-.headerDate {
-  font-size: 16px;
-  color: gray;
-}
-
-.headerDescription {
-  font-size: 20px;
-}
-
-ul,
-ol {
-  list-style-type: decimal;
-  font-size: 19px;
-  padding-left: 20px;
 }

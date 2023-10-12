@@ -8,7 +8,7 @@ type LatexProps = {
 
 export function Latex({ children, inline }: LatexProps) {
   return (
-    <div className="latex">
+    <div style={{ fontSize: '25px' }}>
       <MathJax inline={inline}>{`\\(${children}\\)`}</MathJax>
     </div>
   )

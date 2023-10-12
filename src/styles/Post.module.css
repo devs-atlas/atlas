@@ -1,0 +1,13 @@
+.headerTitle {
+  font-size: 45px;
+  font-weight: bold;
+}
+
+.headerDate {
+  font-size: 16px;
+  color: gray;
+}
+
+.headerDescription {
+  font-size: 20px;
+}

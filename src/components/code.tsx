@@ -1,3 +1,5 @@
+import styles from './Code.module.css'
+
 type CodeProps = {
   code: string[]
 }
@@ -5,9 +7,11 @@ type CodeProps = {
 export default function Code({ code }: CodeProps) {
   const [highlightedCode, output] = code
   return (
-    <pre className="code">
-      <code dangerouslySetInnerHTML={{ __html: highlightedCode }}></code>
-      {output && <div className="output">{output}</div>}
+    <pre>
+      <div className={styles.code}>
+        <code dangerouslySetInnerHTML={{ __html: highlightedCode }}></code>
+        {output && <div className={styles.output}>{output}</div>}
+      </div>
     </pre>
   )
 }

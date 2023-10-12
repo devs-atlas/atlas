@@ -2,7 +2,7 @@
   width: 1px;
   background-color: black;
   height: 100px;
-  margin: 0 40px;
+  margin: 0 40px !important;
   position: relative;
   display: inline-block;
   vertical-align: middle;

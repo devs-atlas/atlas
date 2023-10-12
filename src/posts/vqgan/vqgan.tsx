@@ -4,6 +4,7 @@ import Date from '~/components/date'
 import { Separator } from '~/components/separator'
 import type { PostMeta, Snippets } from '~/lib/posts'
 import useInlineCodeStyling from '~/lib/useInlineCodeStyling'
+import styles from '~/styles/Post.module.css'
 import { fragment, garamond } from '~/styles/fonts'
 import SelfAttentionDiagram from './diagrams/SelfAttentionDiagram'
 
@@ -18,22 +19,26 @@ export default function VQGan({ meta, snippets }: PostProps) {
   return (
     <div className="postContainer">
       <div className="headerContainer">
-        <div className={`${fragment.className} headerTitle`}>{meta.title}</div>
+        <div className={`${fragment.className} ${styles.headerTitle}`}>
+          {meta.title}
+        </div>
         <Date
-          className={`${fragment.className} headerDate`}
+          className={`${fragment.className} ${styles.headerDate}`}
           dateString={meta.date}
         />
-        <div className={`${fragment.className} headerDescription`}>
+        <div className={`${fragment.className} ${styles.headerDescription}`}>
           {meta.description}
         </div>
+        <Separator numCircles={5} width="100%" />
       </div>
-      <Separator numCircles={5} width="100%" />
-      <div className={`${garamond.className} post-content`}>
+      <div className={garamond.className}>
         <p>
           This tutorial is part one of a three(maybe four) part series on
           VQ-GAN, a generative image model.
         </p>
-        <SelfAttentionDiagram />
+      </div>
+      <SelfAttentionDiagram />
+      <div>
         <p>
           Even though the transformer is used to generate images in VQ-GAN, it's
           helpful to understand it on its own. Transformers have by-far the most
@@ -299,19 +304,20 @@ export default function VQGan({ meta, snippets }: PostProps) {
         </p>
         <Code code={snippets['embedding.py']} />
         <h2>Tiniest Language Model</h2>
+      </div>
         <Code code={snippets['language_model.py']} />
         <Code code={snippets['losses_1.py']} />
         {/* TODO: show image in between */}
         <div className="code-img-wrapper">
           <Code code={snippets['word_embeddings.py']} />
           <Image
-            className="code-img"
             src="/posts/vqgan/word_embeddings.webp"
             alt="Graph of word embeddings versus dimensions"
             width={500}
             height={500}
           />
         </div>
+      <div>
         <p>We can also make it generate text</p>
         <Code code={snippets['text.py']} />
         {/* TODO: add pre code showing output here */}
@@ -380,7 +386,9 @@ export default function VQGan({ meta, snippets }: PostProps) {
           into this class. This could should be pretty simple if you've followed
           up until this point.
         </p>
-        <Code code={snippets['gpt.py']} />
+      </div>
+      <Code code={snippets['gpt.py']} />
+      <div>
         <p>Let's use the same training loop as before but use a small GPT.</p>
         {/* TODO: missing plt.plot(losses screenshot) */}
         <Code code={snippets['losses_2.py']} />
