@@ -26,7 +26,13 @@ type StaticProps = { params: { id: string } }
 export async function getStaticProps({ params }: StaticProps) {
   const snippets: Snippets = {}
 
-  const snippetFiles = path.join(process.cwd(), 'posts', params.id, 'snippets')
+  const snippetFiles = path.join(
+    process.cwd(),
+    'src',
+    'posts',
+    params.id,
+    'snippets'
+  )
 
   readdirSync(snippetFiles).forEach((snippetFile) => {
     const [snippetContents, output] = readFileSync(
