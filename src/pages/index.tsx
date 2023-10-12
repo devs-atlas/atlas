@@ -40,7 +40,6 @@ export default function Home() {
   return (
     <Layout>
       <Meta meta={meta!} />
-      {/* <Separator numCircles={5} width="50%" /> */}
     </Layout>
   )
 }

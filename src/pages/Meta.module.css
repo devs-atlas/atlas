@@ -1,17 +1,18 @@
 .meta {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   margin: auto;
-  width: 50%;
+  width: 60%;
   padding: 40px 0;
+  background-color: #ffffff;
 }
 
 .metaContainer {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: flex-start;
+  margin-right: 30px;
 }
 
 .metaTitle {
@@ -27,4 +28,15 @@
   font-size: 14px;
   color: gray;
   margin: 3px;
+}
+
+@media (max-width: 1200px) {
+  .meta {
+    flex-direction: column;
+    align-items: center;
+  }
+  .metaContainer {
+    margin-right: 0px;
+    margin-bottom: 30px;
+  }
 }
