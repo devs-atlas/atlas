@@ -38,7 +38,7 @@ export default function VQGan({ meta, snippets }: PostProps) {
         </p>
       </div>
       <SelfAttentionDiagram />
-      <div>
+      <div className={garamond.className}>
         <p>
           Even though the transformer is used to generate images in VQ-GAN, it's
           helpful to understand it on its own. Transformers have by-far the most
@@ -305,19 +305,19 @@ export default function VQGan({ meta, snippets }: PostProps) {
         <Code code={snippets['embedding.py']} />
         <h2>Tiniest Language Model</h2>
       </div>
-        <Code code={snippets['language_model.py']} />
-        <Code code={snippets['losses_1.py']} />
-        {/* TODO: show image in between */}
-        <div className="code-img-wrapper">
-          <Code code={snippets['word_embeddings.py']} />
-          <Image
-            src="/posts/vqgan/word_embeddings.webp"
-            alt="Graph of word embeddings versus dimensions"
-            width={500}
-            height={500}
-          />
-        </div>
-      <div>
+      <Code code={snippets['language_model.py']} />
+      <Code code={snippets['losses_1.py']} />
+      {/* TODO: show image in between */}
+      <div className="code-img-wrapper">
+        <Code code={snippets['word_embeddings.py']} />
+        <Image
+          src="/posts/vqgan/word_embeddings.webp"
+          alt="Graph of word embeddings versus dimensions"
+          width={500}
+          height={500}
+        />
+      </div>
+      <div className={garamond.className}>
         <p>We can also make it generate text</p>
         <Code code={snippets['text.py']} />
         {/* TODO: add pre code showing output here */}
@@ -388,7 +388,7 @@ export default function VQGan({ meta, snippets }: PostProps) {
         </p>
       </div>
       <Code code={snippets['gpt.py']} />
-      <div>
+      <div className={garamond.className}>
         <p>Let's use the same training loop as before but use a small GPT.</p>
         {/* TODO: missing plt.plot(losses screenshot) */}
         <Code code={snippets['losses_2.py']} />
