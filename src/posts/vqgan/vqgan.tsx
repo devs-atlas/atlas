@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import {Latex} from '../../components/latex'
 import Code from '~/components/code'
 import Date from '~/components/date'
 import { Separator } from '~/components/separator'
@@ -70,34 +71,34 @@ export default function VQGan({ meta, snippets }: PostProps) {
           words --&gt; word`. You can think of it like any other function `f`
           that takes in an input `x` and maps it to `y`, but a much, much longer
           formula.
+          During generation(like when you use ChatGPT), language models take in a sequence
+          of words as context and use that to auto-regressively generate a convincing
+          continuation of the sentence. Auto-regressive means that we have some initial context in the form of a sequence of 
+          words and we use that context to predict the next word. Then, we add that word back onto the original sentence and feed it back into the 
+          language model and have it try to generate the next word with the new sentence as input. GPTs are performing a mapping from `sequence of words --$gt; word`.
+          You can think of it like any other function `f` that takes in an input `x` and maps it to `y`, but a much, much longer formula.
         </p>
         <p>
-          But ChatGPT is already trained. When the model is learning to generate
-          sentences(training), it is actually doing a `sequence of
-          words(x)--&gt;sequence of words(y)` mapping, not just `sequence of
-          words(x) --&gt; word(y)`. Let's say we have the full sentence -- `Hi
-          my name is John` and when we break it into a sequence to be fed into
-          the language model, it becomes `["Hi", "my", "name", "is", "John"]`.
-          The input sequence for one training sample would be `["Hi", "my",
-          "name", "is"]` and the output sequence would be `["my", "name", "is",
-          "John"]`. Since the input `x` and output `y` are the same length, it's
-          really like we're mapping `Hi-&gt;my`, `my-&gt;name`, `name-&gt;is`,
-          and so on. This is an essential insight, because that's what GPTs are
-          doing at their core. They are mapping each word in a sequence to the
-          next word in the squence. At this point, you might be a bit
-          confused(like I was). "The input `x` already has the word `my` in it,
-          so why can't the transformer tell that answer for the next-token is
-          right in front of it? Can't it just directly use that word to make the
-          prediction for `Hi-&gt;my`?" The answer is no. GPTs are set-up in a
-          clever way such that, at the position of `Hi`, the model can only make
-          it's prediction using the previous context, only `Hi` in this case.
-          Similarly, `my` cannot interact with `name`, it only has access to `Hi
-          my`. As a result, when we pass in one training sentence into a GPT,
-          it's like the model is outputting several auto-regressive predictions
-          in each `sequence-&gt;sequence` mapping. The model is making the
-          next-sequence predictions at once. This is a lot more efficient than
-          just comparing the last generated token since we can now compare the
-          prediction at every single place in the sentence to the true value
+          But ChatGPT is already trained. When the model is learning to generate sentences(training), it is actually doing a `sequence of words(x)--$gt;sequence of words(y)` mapping, not just `sequence of words(x) --$gt; word(y)`. 
+
+          Let's say we have the full sentence -- `Hi my name is John` and when we break it into a sequence to be fed into the language model, it becomes `["Hi", "my", "name", "is", "John"]`. The input sequence for one training sample would be `["Hi", "my", "name", "is"]` and the output sequence would be `["my", "name", "is", "John"]`.
+
+          Since the input `x` and output `y` are the same length, 
+          it's really like we're mapping `Hi-$gt;my`, `my-$gt;name`, `name-$gt;is`, and so on. 
+          This is an essential insight, because that's what GPTs are doing at their core. 
+          They are mapping each word in a sequence to the next word in the squence. At 
+          this point, you might be a bit confused(like I was). "The input `x` already 
+          has the word `my` in it, so why can't the transformer tell that answer for 
+          the next-token is right in front of it? Can't it just directly use that word 
+          to make the prediction for `Hi-$gt;my`?" The answer is no. GPTs are set-up in a 
+          clever way such that, at the position of `Hi`, the model can only make it's 
+          prediction using the previous context, only `Hi` in this case. Similarly, `my` 
+          cannot interact with `name`, it only has access to `Hi my`. As a result, when 
+          we pass in one training sentence into a GPT, it's like the model is outputting 
+          several auto-regressive predictions in each `sequence-$gt;sequence` mapping.
+          The model is making the next-sequence predictions at once. This is a lot more
+          efficient than just comparing the last generated token since we can now compare
+          the prediction at every single place in the sentence to the true value
           instead of only the last.
         </p>
         <p>
@@ -294,11 +295,10 @@ export default function VQGan({ meta, snippets }: PostProps) {
         </p>
         <Code code={snippets['encode.py']} />
         <Code code={snippets['tokenize.py']} />
-        <p>
-          Create a dataloader function from raw string. 1. Get batch_size random
-          start index 2. `x` runs from the `index` to `index+context_length` 3.
-          `y` runs from `index+1` to `index+1+context_length` -&gt; the shift
-        </p>
+        <p>Create a dataloader function from raw string. 
+            1. Get batch_size random start index
+            2. `x` runs from the `index` to `index+context_length`
+            3. `y` runs from `index+1` to `index+1+context_length` -&gt; the shift</p>
         <Code code={snippets['get_batch.py']} />
         <h2>Tiniest Language Model</h2>
         <p>
@@ -371,61 +371,46 @@ export default function VQGan({ meta, snippets }: PostProps) {
 
         <h2>Attention</h2>
         <p>
-          In GPTs, attention acts as the primary mechanism for contextual
-          understanding. It facilitates token-to-token information exchange
-          crucial for predicting subsequent tokens. There are two
-          functionalities that we want to have when moving context between
-          tokens with the purpose of improving understanding throughout the
-          residual stream. One is the ability to read information from previous
-          tokens(without also looking ahead to cheat) and another is the ability
-          to choose what information is written to the residual stream.
+        In GPTs, attention acts as the primary mechanism for contextual understanding. It facilitates token-to-token information exchange crucial for predicting subsequent tokens. 
+
+        There are two functionalities that we want to have when moving context between tokens with the purpose of improving understanding throughout the residual stream. 
+
+        1. Read information from previous tokens(without also looking ahead to cheat)
+        2. Write information from previous tokens into the residual stream
         </p>
         <h3>How to read</h3>
         <p>
-          Reading information is similar to a data-retrieval process. We want
-          each token to look to its left and consider which previous words are
-          relevant to the understanding of the current token in some way. In the
-          end, this should look like a probability distribution(all in between 0
-          and 1, sum to 1) over all the tokens previous and including the
-          current token. These probabilities reflect what proportion of the
-          relevant information from the other token that we want to copy into
-          our token. To do so, we want each token in the sequence, including
-          itself, to "broadcast" a certain vector out that is supposed to
-          represent its meaning that is relevant to the current token. It's
-          called `K`. The current token then "broadcasts" its own vector to
-          establish what information it's looking for, `Q`. At every position,
-          every other token is deciding how relevant it is to the current token
-          in this process. Attention uses the dot-product between the
-          broadcasted `Q` vector and all corresponding `K` vectors to obtain a
-          relevancy score value and then softmaxes to get probabilities. The
-          entire reading process is summed up in the attention table. Each row
-          corresponds to how much of the other token vectors we want to copy
-          into the current. ![Alt text](image-2.png) So the square grid that I
-          referred to is actually a real thing -- the attention pattern. The
-          attention pattern, `A`, is responsible for all the reading operations
-          from other tokens. As a result, this is where we implemement the
-          masking operation so our model can only look in the past. All that's
-          needed is just a lower-triangular mask. The way you get that singular
-          relevancy number between the `Q` and `K` vectors is by performing a
-          dot-product comparison between the broadcasted vectors of all the
-          other tokens in the sequence to the current token. Both `Q` and `K`
-          have shape `(B,T,C)`, so to get the proper behavior of multiplication
-          between each feature vector, the dot product is performed with the
-          tranpose of `K`. `Q(B,T,C) @ K(B,C,T)--&gt;A(B,T,T)`. This is the
-          square grid of tokens I wasreferring to. We can perform this kind of
-          multiplication in PyTorch and the batch dimension is ignored so each
-          query token vector is being multiplied by every other key token
-          vector. The linear layers take the function of aligning to whatever
-          operation they're put in. In this NLP, and more broadly attention
-          context, the operation is that the `Q` vector should be what
-          information we want from the other tokens, and the `K` vector should
-          be what information the other vector has. Dot-producting them together
-          along the feature vector dimension gives you the similarity. We can
-          use this as our token reading operation.
+          Reading information is similar to a data-retrieval process.
+          We want each token to look to its left and consider which previous words are relevant to the understanding of
+          the current token in some way. In the end, this should look like a probability distribution(all in between 0 and
+          1, sum to 1) over all the tokens previous and including the current token. These probabilities reflect what
+          proportion of the relevant information from the other token that we want to copy into our token.
+          To do so, we want each token in the sequence, including itself, to "broadcast" a certain vector out that is
+          supposed to represent its meaning that is relevant to the current token. It's called `K`. The current token
+          then "broadcasts" its own vector to establish what information it's looking for, `Q`. At every position, every
+          other token is deciding how relevant it is to the current token in this process. Attention uses the dot-product
+          between the broadcasted `Q` vector and all corresponding `K` vectors to obtain a relevancy score value and then
+          softmaxes to get probabilities. The entire reading process is summed up in the attention table. Each row corresponds
+          to how much of the other token vectors we want to copy into the current.
+
+          ![Alt text](image-2.png)
+
+          So the square grid that I referred to is actually a real thing -- the attention pattern. The attention pattern, `A`, is responsible for all the reading operations from other tokens. As a result, this is where we implemement the masking operation so our model can only look in the past. All that's needed is just a lower-triangular mask.
+          The way you get that singular relevancy number between the `Q` and `K` vectors is by performing a dot-product comparison between the broadcasted vectors of all the other tokens in the sequence to the current token. Both `Q` and `K` have shape `(B,T,C)`, so to get the proper behavior of multiplication between each feature vector, the dot product is performed with the tranpose of `K`. `Q(B,T,C) @ K(B,C,T)-->A(B,T,T)`. This is the square grid of tokens I wasreferring to. We can perform this kind of multiplication in PyTorch and the batch dimension is ignored so each query token vector is being multiplied by every other key token vector.
+          The linear layers take the function of aligning to whatever operation they're put in. In this NLP, and more broadly attention context, the operation is that the `Q` vector should be what information we want from the other tokens, and the `K` vector should be what information the other vector has. Dot-producting them together along the feature vector dimension gives you the similarity. We can use this as our token reading operation.
         </p>
         <p>
-          In math form, it looks like this(where `x` has shape `(B,T,C)`): *PUT
-          ATTENTION LATEX HERE*
+          In math form, it looks like this(where `x` has shape `(B,T,C)`):
+
+          <Latex>
+          Q = \text{Linear} (C,C) \\
+          K = \text{Linear} (C,C) \\
+
+          q = Q(x) \\
+          k = K(x) \\ 
+
+          A = \text{mask}(\frac{(Q \cdot K^T)}{\sqrt{Q_\text{dim}}})
+          </Latex>
         </p>
         <p>We implement it in code form here</p>
         <Code code={snippets['self_attention.py']} />
@@ -468,12 +453,9 @@ export default function VQGan({ meta, snippets }: PostProps) {
         <Code code={snippets['mlp.py']} />
         <h2>TransformerLayer</h2>
         <p>
-          To further abstract the transformer layer so it&apos;s simpler in the
-          actual GPT class, I put all the logic for the residual (attention +
-          MLP) in here. That way, I can just run the input through a list of
-          TransformerLayers.{' '}
-        </p>
-        <Code code={snippets['transformer_layer.py']} />
+          To further abstract the transformer layer so it's simpler in the actual GPT class, I put all the logic for the residual
+          (attention + MLP) in here. That way, I can just run the input through a list of TransformerLayers. </p>
+        <Code code={snippets['transformer_layer.py']}/>
         <h2>Positional Embedding</h2>
         <p>
           OK, last thing. Since we're including prior context, we need some way
@@ -503,11 +485,8 @@ export default function VQGan({ meta, snippets }: PostProps) {
         {/* TODO: missing plt.plot(losses screenshot) */}
         <Code code={snippets['losses_2.py']} />
         <Code code={snippets['generate_sequence.py']} />
-        <p>
-          It might not look great, but compare that to the output of an
-          untrained model. It's clearly picking up on things like the rarity of
-          certain special characters and newlines.
-        </p>
+        <p>It might not look great, but compare that to the output of an untrained model. It's clearly picking up on things
+          like the rarity of certain special characters and commonality of newlines.</p>
         <Code code={snippets['random_output.py']} />
         {/* TODO: find clean way to display the last output*/}
         <h1>Boom</h1>
