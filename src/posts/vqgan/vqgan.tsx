@@ -49,11 +49,6 @@ export default function VQGan({ meta, snippets }: PostProps) {
         </p>
         <h1>Highest-level Overview</h1>
         <p>
-          Transformer=GPT in this tutorial. They have nuanced differences in
-          reality, but in common parlance they mean the same thing. I'll use GPT
-          in this article.
-        </p>
-        <p>
           You should first understand the concept of language modeling generally
           rather than just in the GPT context. Although no other language models
           have come close to GPTs in terms of performing well at a large scale,
@@ -64,57 +59,43 @@ export default function VQGan({ meta, snippets }: PostProps) {
           models.
         </p>
         <p>
-          Language models take in a sequence of words as context and use that to
-          auto-regressively generate a convincing continuation of the sentence.
-          The sequence of words come from some huge training corpus, sampled
-          randomly. Auto-regressive means that we have some initial context in
-          the form of a sequence of words and we use that context to predict the
-          next word. Then, we add that word back onto the original sentence and
-          feed it back into the language model and have it try to generate the
-          next word with the new sentence as input. That's what ChatGPT does.
-          ChatGPT is performing a mapping from `sequence of words --&gt; word`.
-          You can think of it like any other function `f` that takes in an input
-          `x` and maps it to `y`, but a much, much longer formula.
+          During generation(like when you use ChatGPT), language models take in a sequence
+          of words as context and use that to auto-regressively generate a convincing
+          continuation of the sentence. Auto-regressive means that we have some initial context in the form of a sequence of 
+          words and we use that context to predict the next word. Then, we add that word back onto the original sentence and feed it back into the 
+          language model and have it try to generate the next word with the new sentence as input. GPTs are performing a mapping from `sequence of words --> word`.
+          You can think of it like any other function `f` that takes in an input `x` and maps it to `y`, but a much, much longer formula.
         </p>
         <p>
-          But ChatGPT is already trained. When the model is first learning to do
-          the mapping(training), it is actually doing a `sequence of
-          words(x)--&gt;sequence of words(y)` mapping, not just `sequence of
-          words(x) --&gt; word(y)`. Let's say we have the full sentence -- `Hi
-          my name is John` and when we break it into a sequence to be fed into
-          the language model, it becomes `["Hi", "my", "name", "is", "John"]`.
-          The input sequence for one training sample would be `["Hi", "my",
-          "name", "is"]` and the output sequence would be `["my", "name", "is",
-          "John"]`. Notice how the input `x` and output `y` are the same length,
-          so it's really like we're one-to-one mapping `Hi-&gt;my`,
-          `my-&gt;name`, `name-&gt;is`, and so on. This is an essential insight,
-          because that's what GPTs are doing at their core. At this point, you
-          might be a bit confused(like I was). "The input `x` already has the
-          word `my` in it, so why can't the transformer just automatically tell
-          that name is coming next because it's also in the input? Can't it just
-          directly use that word in the input to make the prediction for
-          `Hi-&gt;my`?" The answer is no. GPTs are set-up in a clever way such
-          that, at the position of `Hi`, the model can only make it's prediction
-          using the previous context, only `Hi` in this case. Similarly, `my`
-          cannot interact with `name`, it only has access to `Hi my`. As a
-          result, when we pass in one training sentence into a GPT, it's like
-          the model is outputting several auto-regressive predictions in each
-          `sequence-&gt;sequence` mapping. The model is making the next-sequence
-          predictions at once. This is a lot more efficient than just comparing
-          the last generated token since we can now compare the prediction at
-          every single place in the sentence to the true value instead of only
-          the last.
+          But ChatGPT is already trained. When the model is learning to generate sentences(training), it is actually doing a `sequence of words(x)-->sequence of words(y)` mapping, not just `sequence of words(x) --> word(y)`. 
+
+          Let's say we have the full sentence -- `Hi my name is John` and when we break it into a sequence to be fed into the language model, it becomes `["Hi", "my", "name", "is", "John"]`. The input sequence for one training sample would be `["Hi", "my", "name", "is"]` and the output sequence would be `["my", "name", "is", "John"]`.
+
+          Since the input `x` and output `y` are the same length, 
+          it's really like we're mapping `Hi->my`, `my->name`, `name->is`, and so on. 
+          This is an essential insight, because that's what GPTs are doing at their core. 
+          They are mapping each word in a sequence to the next word in the squence. At 
+          this point, you might be a bit confused(like I was). "The input `x` already 
+          has the word `my` in it, so why can't the transformer tell that answer for 
+          the next-token is right in front of it? Can't it just directly use that word 
+          to make the prediction for `Hi->my`?" The answer is no. GPTs are set-up in a 
+          clever way such that, at the position of `Hi`, the model can only make it's 
+          prediction using the previous context, only `Hi` in this case. Similarly, `my` 
+          cannot interact with `name`, it only has access to `Hi my`. As a result, when 
+          we pass in one training sentence into a GPT, it's like the model is outputting 
+          several auto-regressive predictions in each `sequence->sequence` mapping.
+          The model is making the next-sequence predictions at once. This is a lot more
+          efficient than just comparing the last generated token since we can now compare
+          the prediction at every single place in the sentence to the true value
+          instead of only the last.
         </p>
         <p>
-          When I said previously that language model do a `sequence of
-          words--&gt;word` mapping when generating new sentences, that wasn't
-          entirely true. It's still doing `sequence of words(x)-&gt;sequence of
-          words(y)`, except we only care about the last word in the output
-          sequence `y`. That's because the prior information about the models
-          predictions for the shifted-over version aren't needed in the context
-          of auto-regressive sampling. This is just an unfortunate consequence
-          of the big gains we get in performance during training, since it could
-          be faster.
+        When I said previously that language model do a `sequence of words->word` 
+        mapping when generating new sentences, that wasn't entirely true. 
+        It's still doing `sequence of words(x)->sequence of words(y)`, except we only
+        care about the last word in the output sequence `y`. That's because the prior
+        information about the models predictions for the shifted-over version
+        aren't needed in the context of auto-regressive sampling.
         </p>
         <p>
           Recap: The transformer has two different phases: training and
@@ -148,29 +129,28 @@ export default function VQGan({ meta, snippets }: PostProps) {
         </p>
         <h2>Text to numbers and back</h2>
         <p>
-          I've mentioned mapping words to other words so far, but obviously this
-          is a big abstraction. No deep learning model can actually take in a
+          I've mentioned mapping words to other words so far, but obviously this is a
+          big abstraction. No deep learning model can actually take in a
           string directly as input and process that through a neural network.
-          Instead, we need an internal representation for language. The
-          solution? Tokenization and embeddings.
+          Instead, we need an internal representation for language.
+          The solution? Tokenization and embeddings.
         </p>
         <h2>Step 1: Tokenization</h2>
         <p>
-          Tokenization is the step of converting "Hi my name is John" to ["Hi",
-          "my", "name", "is" , "John"]. One way we could do this is to take all
-          the words in the entire training dataset and assign them a unique
-          integer identifier. This is like a "vocabulary" that we can use to
-          convert a string in the dataset to a list of integers. If "Hi" had
-          integer index 741, "my" 129, and "name" 860, "Hi my name" would become
-          [741, 129, 860]. Once again, this is a simplification. Real models
-          don't just get all the words because this would make the vocabularies
-          way too large. In reality, a vocabulary is typically built from
-          sub-word chunks using an algorithm like Byte-Pair Encoding(BPE). A
-          word like "ensures" might be split up into "en", "sure", "s". It's
-          also possible that "ensure" appears so frequently in the training
-          dataset that it gets its own integer index for the entire word.
-          Choosing a suitable tokenization method is project-specific and is
-          often very messy(integers, for example, are not handled well by BPE).
+          Tokenization is the step of converting
+          "Hi my name is John" to ["Hi", "my", "name", "is" , "John"].
+          One way we could do this is to take all the words in the entire training
+          dataset and assign them a unique integer identifier. This is like a "vocabulary"
+          that we can use to convert a string in the dataset to a list of integers.
+          If "Hi" had integer index 741, "my" 129, and "name" 860, "Hi my name" would
+          become [741, 129, 860]. Once again, this is a simplification. Real models don't
+          just get all the words because this would make the vocabularies way too large.
+          In reality, a vocabulary is typically built from sub-word chunks using an algorithm
+          like Byte-Pair Encoding(BPE). A word like "ensures" might be split up into "en",
+          "sure", "s". It's also possible that "ensure" appears so frequently in the training
+          dataset that it gets its own integer index for the entire word. Choosing a suitable
+          tokenization method is project-specific and is often very messy(integers,
+          for example, are not handled well by BPE).
         </p>
         <p>
           This sentence representation(list of integers) is one of two versions.
@@ -198,16 +178,19 @@ export default function VQGan({ meta, snippets }: PostProps) {
         <h2>Step 2: Embedding</h2>
         <p>
           Tokenization converts strings to integers, yet these integers are not
-          semantically meaningful. There's no information about the meaning of
-          the word encoded in the integer("flower" may be 123 and "cybertruck"
-          124). Ideally, the model would learn something about what these words
-          mean during the training procedure and their numerical values
-          pertained to some semantic meaning. Embeddings address this by
-          assigning each integer(that refers to a sub-word token) in the
-          vocabulary to an n-dimensional vector known as its **embedding**. The
-          structure that handles this assignment is called a lookup table. You
-          take a string, map each string to an integer using sub-word
-          tokenization, and then map that integer to the n-dimensional vector.
+          semantically meaningful. There's no information about the meaning of the
+          word encoded in the integer("flower" may be 123 and "cybertruck" 124).
+          Ideally, the model would learn something about what these words mean
+          during the training procedure and their numerical values pertained to
+          some semantic meaning. Embeddings address this by assigning each
+          integer(that refers to a sub-word token) in the vocabulary to an n-dimensional
+          vector known as its **embedding**. The structure that handles this assignment
+          is called a lookup table. You take a string, map each string to an integer
+          using sub-word tokenization, and then map that integer to the n-dimensional
+          vector.
+
+          Recap: Tokenization converts from a string to a list of integers.
+          Embedding converts from a list of integers to a list of vectors.
         </p>
         <p>
           Recap: Tokenization converts from a string to a list of integers.
@@ -291,42 +274,72 @@ export default function VQGan({ meta, snippets }: PostProps) {
           code.
         </p>
         <Code code={snippets['open.py']} />
+        <p>Get all the unique characters in data with `set`</p>
         <Code code={snippets['vocab.py']} />
+        <p>Create tokenization mapping from integer to character and character to integer.</p>
         <Code code={snippets['encode.py']} />
         <Code code={snippets['tokenize.py']} />
+        <p>Create a dataloader function from raw string. 
+            1. Get batch_size random start index
+            2. `x` runs from the `index` to `index+context_length`
+            3. `y` runs from `index+1` to `index+1+context_length` -> the shift</p>
         <Code code={snippets['get_batch.py']} />
-        <p>
-          Now that we've got data loaded in, it's time to embed. I could use
-          `nn.Embedding`, but I'm going to make my own. Not exactly "on my own",
-          because I'm going to call `torch.nn.functional.embedding` instead
-          which allows us to actually create the embedding matrix ourselves.
-          It's helpful to see it like that.
-        </p>
-        <Code code={snippets['embedding.py']} />
         <h2>Tiniest Language Model</h2>
-      </div>
-      <Code code={snippets['language_model.py']} />
-      <Code code={snippets['losses_1.py']} />
-      {/* TODO: show image in between */}
-      <div className="code-img-wrapper">
-        <Code code={snippets['word_embeddings.py']} />
-        <Image
-          src="/posts/vqgan/word_embeddings.webp"
-          alt="Graph of word embeddings versus dimensions"
-          width={500}
-          height={500}
-        />
-      </div>
-      <div className={garamond.className}>
+        <p>Now that we've got the necessary ingredients for
+          the simplest possible embed to unembed language model,
+          let's build it.</p>
+        <Code code={snippets['language_model.py']} />
+        <Code code={snippets['losses_1.py']} />
+        {/* TODO: show image in between */}
+          <Image
+            className="code-img"
+            src="/posts/vqgan/word_embeddings.webp"
+            alt="Graph of word embeddings versus dimensions"
+            width={500}
+            height={500}
+          />
         <p>We can also make it generate text</p>
         <Code code={snippets['text.py']} />
         {/* TODO: add pre code showing output here */}
         <p>
-          Mechanistic interpretability is the study of deep neural networks and
-          their workings. It's application to GPTs has been pioneered by
-          Anthropic in their "Transformer Circuits" series. I highly, highly
-          recommend reading that after going through this post.
+          Mechanistic interpretability is the study of deep neural networks and their workings. It's application to GPTs has been pioneered by Anthropic in their "Transformer Circuits" series. I highly, highly recommend reading that after going through this post.
+
+          An interesting property--well-known in mechanistic interpretability--is that our simple language model(`embed->unembed`) approximates bigram statistics. Since the model is simply mapping one word to one word with no other context, the best it can theoretically do is to emulate bigram statistics. Bi-gram statistics are the literal frequency counts of each one word to one word mapping present in the dataset. Of course, it doesn't behave exactly the same; we intentionally cause some variability by probabilistically sampling instead of directly taking the highest component.
         </p>
+        <h2>What's a GPT?</h2>
+        <p>
+
+What we've just built is not a GPT, but it's close. The unique GPT components are located in between the embedding and unembedding layer. We've got the outer shell of a language model, but the inner components(what makes GPT special) will allow for reading prior context. Thankfully, these components aren't too hard to wrap your head around given the framework that I've laid out so far. 
+
+Once embedded, the `(B,T,C)` input is fed through a series of residually stacked "transformer layers". Each transformer layer is identical in architecture. These transformers layers are "residual" because they do not replace the signal like `new_x = transformer_layer(x)`, but `x = x + transformer_layer(x)`. Inside the transformer layer are two components, an attention layer and an MLP layer. First, the attention layer is added onto the original, `x = x + attention(x)`, and then `x = x + mlp(x)`. If you expand this out, it looks like `x = x + attention(x) + mlp(x + attention(x))`. The original input persists through each transformer layer but is having information read and wrote to it in each layer. 
+
+You can think of this as a sort of data highway. The embedded input `(B,T,C)` is fed into the transformer layers and it's values are repeatedly read and wrote to until it reaches the unembedding. Recall how, in our simple `embedding->unembedding` model, each token is being directly mapped from current to next token. Transformer layers add in the ability to mix in context from previous words as well. Specifically, the attention layer is the only operation that allows for information to mix from previous words because the MLP is another position-wise network.
+
+The concept that I've just described is the residual stream, a key insight of mechanistic interpretability. With this insight, the behaviour and interpretability of the model becomes much clearer. All operations on the residual stream are linear (direct addition), so information has the ability to persist in certain "linear subspaces" of the model throughout many layers. Consequently, layers can communicate and perform functions across each other.</p>
+        
+        <h2>Attention</h2>
+        <p>
+        In GPTs, attention acts as the primary mechanism for contextual understanding. It facilitates token-to-token information exchange crucial for predicting subsequent tokens. 
+
+There are two functionalities that we want to have when moving context between tokens with the purpose of improving understanding throughout the residual stream. One is the ability to read information from previous tokens(without also looking ahead to cheat) and another is the ability to choose what information is written to the residual stream. 
+        </p>
+        <h3>How to read</h3>
+        <p>
+        Reading information is similar to a data-retrieval process. We want each token to look to its left and consider which previous words are relevant to the understanding of the current token in some way. In the end, this should look like a probability distribution(all in between 0 and 1, sum to 1) over all the tokens previous and including the current token. These probabilities reflect what proportion of the relevant information from the other token that we want to copy into our token. To do so, we want each token in the sequence, including itself, to "broadcast" a certain vector out that is supposed to represent its meaning that is relevant to the current token. It's called `K`. The current token then "broadcasts" its own vector to establish what information it's looking for, `Q`. At every position, every other token is deciding how relevant it is to the current token in this process. Attention uses the dot-product between the broadcasted `Q` vector and all corresponding `K` vectors to obtain a relevancy score value and then softmaxes to get probabilities. The entire reading process is summed up in the attention table. Each row corresponds to how much of the other token vectors we want to copy into the current.
+
+        ![Alt text](image-2.png)
+
+  So the square grid that I referred to is actually a real thing -- the attention pattern. The attention pattern, `A`, is responsible for all the reading operations from other tokens. As a result, this is where we implemement the masking operation so our model can only look in the past. All that's needed is just a lower-triangular mask.
+  The way you get that singular relevancy number between the `Q` and `K` vectors is by performing a dot-product comparison between the broadcasted vectors of all the other tokens in the sequence to the current token. Both `Q` and `K` have shape `(B,T,C)`, so to get the proper behavior of multiplication between each feature vector, the dot product is performed with the tranpose of `K`. `Q(B,T,C) @ K(B,C,T)-->A(B,T,T)`. This is the square grid of tokens I wasreferring to. We can perform this kind of multiplication in PyTorch and the batch dimension is ignored so each query token vector is being multiplied by every other key token vector.
+  The linear layers take the function of aligning to whatever operation they're put in. In this NLP, and more broadly attention context, the operation is that the `Q` vector should be what information we want from the other tokens, and the `K` vector should be what information the other vector has. Dot-producting them together along the feature vector dimension gives you the similarity. We can use this as our token reading operation.
+        </p>
+        <p>
+        In math form, it looks like this(where `x` has shape `(B,T,C)`):
+
+        *PUT ATTENTION LATEX HERE*
+
+        </p>
+        <p>We implement it in code form here</p>
         <Code code={snippets['self_attention.py']} />
         <h2>From One to Multiple Heads</h2>
         <p>
@@ -365,6 +378,10 @@ export default function VQGan({ meta, snippets }: PostProps) {
           unexpansion, the input is fed through an activation function.
         </p>
         <Code code={snippets['mlp.py']} />
+        <h2>TransformerLayer</h2>
+        <p>
+        To further abstract the transformer layer so it's simpler in the actual GPT class, I put all the logic for the residual (attention + MLP) in here. That way, I can just run the input through a list of TransformerLayers. </p>
+        <Code code={snippets['transformer_layer.py']}/>
         <h2>Positional Embedding</h2>
         <p>
           OK, last thing. Since we're including prior context, we need some way
@@ -379,6 +396,7 @@ export default function VQGan({ meta, snippets }: PostProps) {
           to the max context length and an embedding dimension. Then, you can
           just add the positional embeddings to the main embeddings.
         </p>
+        <Code code={snippets['positional_embedding.py']} />
         <h2>The long awaited GPT</h2>
         <p>
           Everything is finally built. Embedding, unembedding, MLP, multi-head
@@ -393,6 +411,8 @@ export default function VQGan({ meta, snippets }: PostProps) {
         {/* TODO: missing plt.plot(losses screenshot) */}
         <Code code={snippets['losses_2.py']} />
         <Code code={snippets['generate_sequence.py']} />
+        <p>It might not look great, but compare that to the output of an untrained model. It's clearly picking up on things like the rarity of certain special characters and newlines.</p>
+        <Code code={snippets['random_output.py']} />
         {/* TODO: find clean way to display the last output*/}
         <h1>Boom</h1>
         <p>

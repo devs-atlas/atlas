@@ -1,0 +1,1 @@
+self.pos_embedding = Embedding(embedding_dim,max_context_length)
