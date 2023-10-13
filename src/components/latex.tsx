@@ -1,4 +1,4 @@
-import { MathJax } from 'better-react-mathjax'
+import { MathJax, MathJaxContext } from 'better-react-mathjax'
 import { ReactNode } from 'react'
 
 type LatexProps = {
@@ -9,7 +9,9 @@ type LatexProps = {
 export function Latex({ children, inline }: LatexProps) {
   return (
     <div style={{ fontSize: '25px' }}>
-      <MathJax inline={inline}>{`\\(${children}\\)`}</MathJax>
+      <MathJaxContext>
+        <MathJax inline={inline}>{`\\(${children}\\)`}</MathJax>
+      </MathJaxContext>
     </div>
   )
 }
