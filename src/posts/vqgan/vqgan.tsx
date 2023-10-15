@@ -159,7 +159,6 @@ export default function VQGan({ meta, snippets }: PostProps) {
           while two and three are more GPT-specific.
         </p>
         <h1>Text to numbers and back</h1>
-        
         <p>
           I've mentioned mapping words to other words so far, but obviously this
           is a big abstraction. No deep learning model can actually take in a
@@ -176,40 +175,27 @@ export default function VQGan({ meta, snippets }: PostProps) {
         />
         <h2>Tokenization</h2>
         <p>
-          Tokenization is the step of converting "Hi my name is John" to ["Hi",
-          "my", "name", "is" , "John"]. One way we could do this is to take all
-          the words in the entire training dataset and assign them a unique
-          integer identifier. This is like a "vocabulary" that we can use to
-          convert a string in the dataset to a list of integers. If "Hi" had
-          integer index 741, "my" 129, and "name" 860, "Hi my name" would become
-          [741, 129, 860]. Once again, this is a simplification. Real models
-          don't just get all the words because this would make the vocabularies
-          way too large. In reality, a vocabulary is typically built from
-          sub-word chunks using an algorithm like Byte-Pair Encoding(BPE). A
-          word like "ensures" might be split up into "en", "sure", "s". It's
-          also possible that "ensure" appears so frequently in the training
-          dataset that it gets its own integer index for the entire word.
-          Choosing a suitable tokenization method is project-specific and is
-          often very messy(integers, for example, are not handled well by BPE).
+          Tokenization refers to transforming an input string into a discrete sequence of word-tokens.
+          Typically, tokenization is a two-step process:
+          <ol>
+            <li>Build a vocabulary from the initial training corpus</li>
+            <li>Use that vocabulary to break up the input string into a sequence of tokens</li>
+          </ol>
+          
+          </p>
+        <p>
+          Before breaking up a sentence into a sequence of tokens, we need to identify
+          the list of possible tokens, or our "vocabulary". There are many ways to do this:
+          <ul>
+            <li>Character level - get all unique characters from training corpus and assign each an integer</li>
+            <li>Sub-word level - use an algorithm like Byte-Pair Tokenization to identify common sub-words</li>
+            <li>Sentence level - split entire sentences into tokens using another pre-trained model</li>
+          </ul>
         </p>
         <p>
-          This sentence representation(list of integers) is one of two versions.
-          It's more visually interpretable but less computation-friendly than
-          the other representation which uses one-hot encoding. In one-hot
-          encoding, each token is represented by a vector where all elements are
-          zeros except for a single '1' at the index corresponding to the
-          token's integer identifier from the vocabulary. Using our previous
-          values(Hi=741, my=129, name=860), the sentence would not be a list of
-          integers, but a list of one-hot encoded vectors. The first vector in
-          the list would refer to "Hi", so there would be a '0' everywhere
-          except at the index 741 in the vector. The length of each vector is
-          the length of our "vocabulary". You'll often see this called
-          `vocab_size`.
-        </p>
-        <p>
-          The one-hot encoded representation is what we'll actually use as the
-          input and output to our model, so it's important that you understand
-          it well. I'll get more into the details of that later on, though.
+          In practice, sub-word tokenization is the most common, and for good reason. Characters are too granular for a good
+          discrete-representation of language. Think about it this way: `a` can be used in so many different contexts, whereas `apple`
+          has a much more definite atomized meaning. On the other end, sentence-level tokenization is just too coarse-grained for language modeling tasks.
         </p>
         <p>
           I'll use a character-level tokenizer (will explain later) in the
@@ -226,28 +212,29 @@ export default function VQGan({ meta, snippets }: PostProps) {
         <p>
           Tokenization converts strings to integers, yet these integers are not
           semantically meaningful. There's no information about the meaning of
-          the word encoded in the integer("flower" may be 123 and "cybertruck"
-          124). Ideally, the model would learn something about what these words
-          mean during the training procedure and their numerical values
-          pertained to some semantic meaning. Embeddings address this by
-          assigning each integer(that refers to a sub-word token) in the
-          vocabulary to an n-dimensional vector known as its **embedding**. The
+          the word encoded in the integer(i.e. `flower=123` and `cybertruck= 124`).
+          We could let the model operate on single integers, but then we only have
+          one number to represent each word. This is not enough information to work with per word.
+          
+          Embeddings address this by assigning each integer(that refers to a sub-word token) in the
+          vocabulary to an n-dimensional vector known as its embedding. The data
           structure that handles this assignment is called a lookup table. You
           take a string, map each string to an integer using sub-word
           tokenization, and then map that integer to the n-dimensional vector.
+
+        </p>
+        <p>
+          The vectors in the lookup-table are adjusted during training. As a result, their positions in vector space begin
+          to reflect their semantic meaning(look at the image above). `Germany` is 10 away from `Berlin` and `Tokyo` is 10 away from `Japan`.
+          `Germany-Berlin=Capital` and `Japan-Tokyo=Capital`. Woah.
         </p>
         <h2>Unembedding</h2>
         <p>
-          Unembedding is a different process from embedding, despite the name.
-          Obviously, it can't simply do a reverse-embedding since we don't
-          expect the output of the model to be made of vectors of the exact same
-          values as the input. They will be changed a bit. Instead, we use
-          something called a position-wise linear layer. If you don't get what a
-          linear layer is, I suggest you watch 3blue1browns series on neural
-          networks. If you don't get what "position-wise" means, I will explain.
-          Our embedded sequence is composed of a list of n-dimensional vectors.
-          These vectors each refer to an independent token in the sequence. When
-          we use a position-wise linear layer, it means that each token vector
+          Unembedding is a fundamentally different process than embedding. There's no way of doing a reverse lookup table.
+          We need to use a more flexible vector to integer model: a position-wise linear layer. If you don't get what
+          "position-wise" means, I will explain. Our embedded sequence is composed of a
+          list of n-dimensional vectors. These vectors each refer to an independent token in the sequence.
+          When we use a position-wise linear layer, it means that each token vector
           in the sequence of token vectors is processed by the same linear
           layer. Therefore, the linear layer isn't a `sequence-&gt;sequence`
           linear map, but a `word-&gt;word` linear map applied individually
@@ -259,8 +246,7 @@ export default function VQGan({ meta, snippets }: PostProps) {
           because there is no mechanism to do so. The embedding operates on each
           token independently, and the unembedding acts on each token vector
           independently. The ability to use context from before was an add-on
-          made by the transformer, not the other way around(the ability to look
-          ahead for context was removed).
+          made by the transformer.
         </p>
         <p>
           At this point, assuming you understand everything explained to this
@@ -268,7 +254,10 @@ export default function VQGan({ meta, snippets }: PostProps) {
           groundwork laid, I now feel comfortable integrating some math notation
           into it.
         </p>
-        <h2>Understanding the flow of data in terms of changes of shapes</h2>
+        <h1>Understanding the flow of data in terms of changes of shapes</h1>
+        <p>In this section, I'll introduce you to a style of mathematical notation that makes reasoning about/debugging
+          deep learning models drastically easier. 
+        </p>
         <p>
           The input to our model is not actually a single sequence of text; it's
           a batch made of several, independent sequences of text. Each sequence
@@ -304,8 +293,9 @@ export default function VQGan({ meta, snippets }: PostProps) {
           width={500}
           height={500}
         />
+        <h3>Recap</h3>
         <p>
-          Recap: We have a bunch of text in our training dataset. We get text in
+          We have a bunch of text in our training dataset. We get text in
           batches and tokenize, resulting in an input with shape `(B,T)`.
           Converting this to a one-hot encoded representation yields a
           `(B,T,vocab_size)` input. After embedding, the input becomes
@@ -315,6 +305,7 @@ export default function VQGan({ meta, snippets }: PostProps) {
           language model that goes from tokenization to embedding to
           unembedding.
         </p>
+        <h1>Coding it up</h1>
         <p>
           First let's build the character-level tokenizer and load some data in
           (tiny-shakespeare). I'll explain each line in comments next to the
@@ -344,15 +335,12 @@ export default function VQGan({ meta, snippets }: PostProps) {
         <Code code={snippets['losses_1.py']} />
         {/* TODO: show image in between */}
         <p>... and generate</p>
-        <Code code={snippets['text.py']} />
+        <Code code={snippets['generate_simple.py']} />
         {/* TODO: add pre code showing output here */}
         <p>
-          Mechanistic interpretability is the study of deep neural networks and
-          their workings. It's application to GPTs has been pioneered by
-          Anthropic in their "Transformer Circuits" series. I highly, highly
-          recommend reading that after going through this post. An interesting
-          property--well-known in mechanistic interpretability--is that our
-          simple language model(`embed-&gt;unembed`) approximates bigram
+          An interesting
+          property well-known in <a href="https://transformer-circuits.pub/2021/framework/index.html">mechanistic interpretability</a>
+           is that our simple language model(`embed-&gt;unembed`) approximates bigram
           statistics. Since the model is simply mapping one word to one word
           with no other context, the best it can theoretically do is to emulate
           bigram statistics. Bi-gram statistics are the literal frequency counts
@@ -361,14 +349,7 @@ export default function VQGan({ meta, snippets }: PostProps) {
           some variability by probabilistically sampling instead of directly
           taking the highest component.
         </p>
-        <h2>What's a GPT?</h2>
-        <Image
-          className="language-img"
-          src="/posts/vqgan/residualstream.png"
-          alt="Graph of word embeddings versus dimensions"
-          width={500}
-          height={500}
-        />
+        <h1>What's a GPT?</h1>
         <p>
           What we've just built is not a GPT, but it's close. The unique GPT
           components are located in between the embedding and unembedding layer.
@@ -432,23 +413,12 @@ export default function VQGan({ meta, snippets }: PostProps) {
           between the broadcasted `Q` vector and all corresponding `K` vectors to obtain a relevancy score value and then
           softmaxes to get probabilities. The entire reading process is summed up in the attention table. Each row corresponds
           to how much of the other token vectors we want to copy into the current.
-
+        </p>
+        <p>
           So the square grid that I referred to is actually a real thing -- the attention pattern. The attention pattern, `A`, is responsible for all the reading operations from other tokens. As a result, this is where we implemement the masking operation so our model can only look in the past. All that's needed is just a lower-triangular mask.
           The way you get that singular relevancy number between the `Q` and `K` vectors is by performing a dot-product comparison between the broadcasted vectors of all the other tokens in the sequence to the current token. Both `Q` and `K` have shape `(B,T,C)`, so to get the proper behavior of multiplication between each feature vector, the dot product is performed with the tranpose of `K`. `Q(B,T,C) @ K(B,C,T)--&gt;A(B,T,T)`. This is the square grid of tokens I wasreferring to. We can perform this kind of multiplication in PyTorch and the batch dimension is ignored so each query token vector is being multiplied by every other key token vector.
           The linear layers take the function of aligning to whatever operation they're put in. In this NLP, and more broadly attention context, the operation is that the `Q` vector should be what information we want from the other tokens, and the `K` vector should be what information the other vector has. Dot-producting them together along the feature vector dimension gives you the similarity. We can use this as our token reading operation.
         </p>
-          <div className='language-img'>
-          <Latex>{`
-            \\begin{aligned}
-              Q &= \\text{Linear}(C, C) \\\\
-              K &= \\text{Linear}(C, C) \\\\
-              q &= Q(x) \\\\
-              k &= K(x) \\\\
-              A &= \\text{mask}\\left(\\frac{Q \\cdot K^T}{\\sqrt{\\text{dim}(Q)}}\\right)
-            \\end{aligned}
-          `}</Latex>
-          </div>
-
         <p>We implement it in code form here</p>
         <Code code={snippets['self_attention.py']} />
         <h2>From One to Multiple Heads</h2>
@@ -456,7 +426,7 @@ export default function VQGan({ meta, snippets }: PostProps) {
           In this setup, each attention layer is responsible for one read and
           write operation. This is an inefficient use of compute because you can
           reduce the dimensionality of the `QKV` matrices and still achieve good
-          performance. The way to resolve this is to split up the `QKV` matrices
+          performance. The way to resolve this is to split up each of the `QKV` matrices
           into `num_heads` heads, and apply the attention operation separately
           for each head. `Q` has shape `(B,T,C)`, so if we want four heads, we
           make the shape `(B,T,4,C//4)`. I'll call `C//4` the `head_dim` and
@@ -494,6 +464,13 @@ export default function VQGan({ meta, snippets }: PostProps) {
           (attention + MLP) in here. That way, I can just run the input through a list of TransformerLayers. </p>
         <Code code={snippets['transformer_layer.py']}/>
         <h2>Positional Embedding</h2>
+        <Image
+          className="language-img"
+          src="/posts/vqgan/positionalembedding.svg"
+          alt="Graph of word embeddings versus dimensions"
+          width={500}
+          height={500}
+        />
         <p>
           OK, last thing. Since we're including prior context, we need some way
           of telling the model *where* it's copying information from when doing

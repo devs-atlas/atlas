@@ -15,3 +15,9 @@ print(
         decode(list(token_tensors[0].flatten().detach().numpy()))
     )
 )
+
+# SNIPPET #
+fesn!atbRFhed wfrnt o soaq:A
+Wle he,oI
+Wud deis
+MVS
