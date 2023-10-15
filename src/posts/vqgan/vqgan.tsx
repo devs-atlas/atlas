@@ -33,12 +33,9 @@ export default function VQGan({ meta, snippets }: PostProps) {
         <Separator numCircles={5} width="100%" />
       </div>
       <div className={garamond.className}>
-        <p>
-          This tutorial is part one of a three(maybe four) part series on
-          VQ-GAN, a generative image model.
-        </p>
+  
       </div>
-      <SelfAttentionDiagram />
+      {/*<SelfAttentionDiagram />*/}
       <div className={garamond.className}>
         <p>
           Even though the transformer is used to generate images in VQ-GAN, it's
@@ -48,7 +45,7 @@ export default function VQGan({ meta, snippets }: PostProps) {
           understand transformers in the image domain and transfer that
           understanding to the NLP domain than vice versa.
         </p>
-        <h1>Highest-level Overview</h1>
+        <h1>Basics of Language Modeling</h1>
         <p>
           You should first understand the concept of language modeling generally
           rather than just in the GPT context. Although no other language models
@@ -59,43 +56,56 @@ export default function VQGan({ meta, snippets }: PostProps) {
           context is helpful. For now, don't think about GPTs, think language
           models.
         </p>
+        <h2>Auto-regressive Generation</h2>
         <p>
-          During generation(like when you use ChatGPT), language models take in
-          a sequence of words as context and use that to auto-regressively
-          generate a convincing continuation of the sentence. Auto-regressive
-          means that we have some initial context in the form of a sequence of
-          words and we use that context to predict the next word. Then, we add
-          that word back onto the original sentence and feed it back into the
-          language model and have it try to generate the next word with the new
-          sentence as input. GPTs are performing a mapping from `sequence of
-          words --&gt; word`. You can think of it like any other function `f`
-          that takes in an input `x` and maps it to `y`, but a much, much longer
-          formula.
+          
           During generation(like when you use ChatGPT), language models take in a sequence
           of words as context and use that to auto-regressively generate a convincing
-          continuation of the sentence. Auto-regressive means that we have some initial context in the form of a sequence of 
-          words and we use that context to predict the next word. Then, we add that word back onto the original sentence and feed it back into the 
-          language model and have it try to generate the next word with the new sentence as input. GPTs are performing a mapping from `sequence of words --$gt; word`.
-          You can think of it like any other function `f` that takes in an input `x` and maps it to `y`, but a much, much longer formula.
+          continuation of the sentence. Auto-regressive means that we have some initial
+          context in the form of a sequence of
+          words and we use that context to predict the next word.
+
+          
+          We add that word back onto
+          the original sentence and feed it back into the
+          language model and have it try to generate the next word with the new sentence as input.
+
+          This is the "generating" side in the image below.
+
+          GPTs are performing a mapping from `sequence of words -&gt; word`.
+          You can think of it like any other function `f` that takes in an input `x` and maps it to `y`, but a much,
+          much longer formula.
+        </p>
+        <h2>Training</h2>
+        <p>
+          But ChatGPT is already trained. When the model is learning to generate sentences(training), it performs a `sequence of words(x)-&gt;sequence of words(y)`
+          mapping, not just `sequence of words(x) -&gt; word(y)`.
+
+          Let's say we have the sentence `Hi my name is John`. When we break it into a sequence to be fed into the
+          language model, the string is split into `["Hi", "my", "name", "is", "John"]`.
+          </p>
+          <p>
+          The input sequence for one training sample is `["Hi", "my", "name", "is"]` and the output sequence is `["my", "name", "is", "John"]`.
+
+          `x` and `y` are the same length, so it's really like mapping `Hi-&gt;my`,
+          `my-&gt;name`, `name-&gt;is`, and so on. This is an essential insight, because that's what GPTs are doing at their core. 
+          They are mapping each word in a sequence to the next word in the sequence directly. 
         </p>
         <p>
-          But ChatGPT is already trained. When the model is learning to generate sentences(training), it is actually doing a `sequence of words(x)--$gt;sequence of words(y)` mapping, not just `sequence of words(x) --$gt; word(y)`. 
-
-          Let's say we have the full sentence -- `Hi my name is John` and when we break it into a sequence to be fed into the language model, it becomes `["Hi", "my", "name", "is", "John"]`. The input sequence for one training sample would be `["Hi", "my", "name", "is"]` and the output sequence would be `["my", "name", "is", "John"]`.
-
-          Since the input `x` and output `y` are the same length, 
-          it's really like we're mapping `Hi-$gt;my`, `my-$gt;name`, `name-$gt;is`, and so on. 
-          This is an essential insight, because that's what GPTs are doing at their core. 
-          They are mapping each word in a sequence to the next word in the squence. At 
-          this point, you might be a bit confused(like I was). "The input `x` already 
-          has the word `my` in it, so why can't the transformer tell that answer for 
-          the next-token is right in front of it? Can't it just directly use that word 
-          to make the prediction for `Hi-$gt;my`?" The answer is no. GPTs are set-up in a 
-          clever way such that, at the position of `Hi`, the model can only make it's 
-          prediction using the previous context, only `Hi` in this case. Similarly, `my` 
-          cannot interact with `name`, it only has access to `Hi my`. As a result, when 
-          we pass in one training sentence into a GPT, it's like the model is outputting 
-          several auto-regressive predictions in each `sequence-$gt;sequence` mapping.
+          GPTs are set-up in a clever way such that, at the position of `Hi`, the model can only make it's 
+          prediction using the previous context(just `Hi` in this case). `my` 
+          cannot interact with `name`, it only has access to `Hi my`.
+        </p>
+        <Image
+          className="language-img"
+          src="/posts/vqgan/nopeeking.svg"
+          alt="Graph of word embeddings versus dimensions"
+          width={500}
+          height={500}
+        /> 
+        <p>
+          As a result, when we pass in one training sentence into a GPT, it's like the model is
+          outputting several next-word predictions all at once. `Hi` is doing its best to figure out `my`
           The model is making the next-sequence predictions at once. This is a lot more
           efficient than just comparing the last generated token since we can now compare
           the prediction at every single place in the sentence to the true value
@@ -110,8 +120,16 @@ export default function VQGan({ meta, snippets }: PostProps) {
           predictions for the shifted-over version aren't needed in the context
           of auto-regressive sampling.
         </p>
+        <h3>Recap</h3>
+        <Image
+          className="language-img"
+          src="/posts/vqgan/language.svg"
+          alt="Graph of word embeddings versus dimensions"
+          width={500}
+          height={500}
+        /> 
         <p>
-          Recap: The transformer has two different phases: training and
+          The transformer has two different phases: training and
           generation. When training, the model is mapping
           `sequence-&gt;sequence` and comparing it's predictions for each word
           to the true shifted over version of the input at every single
@@ -140,7 +158,8 @@ export default function VQGan({ meta, snippets }: PostProps) {
           more `essential/fundamental` question to language modeling generally,
           while two and three are more GPT-specific.
         </p>
-        <h2>Text to numbers and back</h2>
+        <h1>Text to numbers and back</h1>
+        
         <p>
           I've mentioned mapping words to other words so far, but obviously this
           is a big abstraction. No deep learning model can actually take in a
@@ -148,7 +167,14 @@ export default function VQGan({ meta, snippets }: PostProps) {
           Instead, we need an internal representation for language. The
           solution? Tokenization and embeddings.
         </p>
-        <h2>Step 1: Tokenization</h2>
+        <Image
+          className="language-img"
+          src="/posts/vqgan/texttonumbersnoshape.svg"
+          alt="Graph of word embeddings versus dimensions"
+          width={500}
+          height={500}
+        />
+        <h2>Tokenization</h2>
         <p>
           Tokenization is the step of converting "Hi my name is John" to ["Hi",
           "my", "name", "is" , "John"]. One way we could do this is to take all
@@ -189,7 +215,14 @@ export default function VQGan({ meta, snippets }: PostProps) {
           I'll use a character-level tokenizer (will explain later) in the
           beginning and then switch it to BPE later on.
         </p>
-        <h2>Step 2: Embedding</h2>
+        <h2>Embedding</h2>
+        <Image
+          className="language-img"
+          src="/posts/vqgan/embedding.svg"
+          alt="Graph of word embeddings versus dimensions"
+          width={500}
+          height={500}
+        />
         <p>
           Tokenization converts strings to integers, yet these integers are not
           semantically meaningful. There's no information about the meaning of
@@ -202,14 +235,8 @@ export default function VQGan({ meta, snippets }: PostProps) {
           structure that handles this assignment is called a lookup table. You
           take a string, map each string to an integer using sub-word
           tokenization, and then map that integer to the n-dimensional vector.
-          Recap: Tokenization converts from a string to a list of integers.
-          Embedding converts from a list of integers to a list of vectors.
         </p>
-        <p>
-          Recap: Tokenization converts from a string to a list of integers.
-          Embedding converts from a list of integers to a list of vectors.
-        </p>
-        <h2>Step 3: Unembedding</h2>
+        <h2>Unembedding</h2>
         <p>
           Unembedding is a different process from embedding, despite the name.
           Obviously, it can't simply do a reverse-embedding since we don't
@@ -270,6 +297,13 @@ export default function VQGan({ meta, snippets }: PostProps) {
           `(B,T,C)` convention is very good short-hand for comments and einsum
           notation, which I'll use later.
         </p>
+        <Image
+          className="language-img"
+          src="/posts/vqgan/texttonumbers.svg"
+          alt="Graph of word embeddings versus dimensions"
+          width={500}
+          height={500}
+        />
         <p>
           Recap: We have a bunch of text in our training dataset. We get text in
           batches and tokenize, resulting in an input with shape `(B,T)`.
@@ -303,19 +337,13 @@ export default function VQGan({ meta, snippets }: PostProps) {
         <h2>Tiniest Language Model</h2>
         <p>
           Now that we've got the necessary ingredients for the simplest possible
-          embed to unembed language model, let's build it.
+          embed to unembed language model, let's build it...
         </p>
         <Code code={snippets['language_model.py']} />
+        <p>... and train</p>
         <Code code={snippets['losses_1.py']} />
         {/* TODO: show image in between */}
-        <Image
-          className="code-img"
-          src="/posts/vqgan/word_embeddings.webp"
-          alt="Graph of word embeddings versus dimensions"
-          width={500}
-          height={500}
-        />
-        <p>We can also make it generate text</p>
+        <p>... and generate</p>
         <Code code={snippets['text.py']} />
         {/* TODO: add pre code showing output here */}
         <p>
@@ -334,6 +362,13 @@ export default function VQGan({ meta, snippets }: PostProps) {
           taking the highest component.
         </p>
         <h2>What's a GPT?</h2>
+        <Image
+          className="language-img"
+          src="/posts/vqgan/residualstream.png"
+          alt="Graph of word embeddings versus dimensions"
+          width={500}
+          height={500}
+        />
         <p>
           What we've just built is not a GPT, but it's close. The unique GPT
           components are located in between the embedding and unembedding layer.
@@ -371,20 +406,25 @@ export default function VQGan({ meta, snippets }: PostProps) {
 
         <h2>Attention</h2>
         <p>
-        In GPTs, attention acts as the primary mechanism for contextual understanding. It facilitates token-to-token information exchange crucial for predicting subsequent tokens. 
+          In GPTs, attention acts as the primary mechanism for contextual understanding.
+          It facilitates token-to-token information exchange crucial for predicting subsequent tokens.
 
-        There are two functionalities that we want to have when moving context between tokens with the purpose of improving understanding throughout the residual stream. 
-
-        1. Read information from previous tokens(without also looking ahead to cheat)
-        2. Write information from previous tokens into the residual stream
+          There are two functionalities that we want to have when moving context between tokens with the purpose of
+          improving understanding throughout the residual stream.
         </p>
-        <h3>How to read</h3>
+        <ol>
+          <li>Read information from previous tokens(without also looking ahead to cheat)</li>
+          <li>Write information from previous tokens into the residual stream</li>
+        </ol>
+        <h2>How to read</h2>
         <p>
           Reading information is similar to a data-retrieval process.
           We want each token to look to its left and consider which previous words are relevant to the understanding of
           the current token in some way. In the end, this should look like a probability distribution(all in between 0 and
           1, sum to 1) over all the tokens previous and including the current token. These probabilities reflect what
-          proportion of the relevant information from the other token that we want to copy into our token.
+          proportion of the relevant information from the other token that we want to copy into our token.</p>
+          
+        <p>
           To do so, we want each token in the sequence, including itself, to "broadcast" a certain vector out that is
           supposed to represent its meaning that is relevant to the current token. It's called `K`. The current token
           then "broadcasts" its own vector to establish what information it's looking for, `Q`. At every position, every
@@ -393,25 +433,22 @@ export default function VQGan({ meta, snippets }: PostProps) {
           softmaxes to get probabilities. The entire reading process is summed up in the attention table. Each row corresponds
           to how much of the other token vectors we want to copy into the current.
 
-          ![Alt text](image-2.png)
-
           So the square grid that I referred to is actually a real thing -- the attention pattern. The attention pattern, `A`, is responsible for all the reading operations from other tokens. As a result, this is where we implemement the masking operation so our model can only look in the past. All that's needed is just a lower-triangular mask.
-          The way you get that singular relevancy number between the `Q` and `K` vectors is by performing a dot-product comparison between the broadcasted vectors of all the other tokens in the sequence to the current token. Both `Q` and `K` have shape `(B,T,C)`, so to get the proper behavior of multiplication between each feature vector, the dot product is performed with the tranpose of `K`. `Q(B,T,C) @ K(B,C,T)-->A(B,T,T)`. This is the square grid of tokens I wasreferring to. We can perform this kind of multiplication in PyTorch and the batch dimension is ignored so each query token vector is being multiplied by every other key token vector.
+          The way you get that singular relevancy number between the `Q` and `K` vectors is by performing a dot-product comparison between the broadcasted vectors of all the other tokens in the sequence to the current token. Both `Q` and `K` have shape `(B,T,C)`, so to get the proper behavior of multiplication between each feature vector, the dot product is performed with the tranpose of `K`. `Q(B,T,C) @ K(B,C,T)--&gt;A(B,T,T)`. This is the square grid of tokens I wasreferring to. We can perform this kind of multiplication in PyTorch and the batch dimension is ignored so each query token vector is being multiplied by every other key token vector.
           The linear layers take the function of aligning to whatever operation they're put in. In this NLP, and more broadly attention context, the operation is that the `Q` vector should be what information we want from the other tokens, and the `K` vector should be what information the other vector has. Dot-producting them together along the feature vector dimension gives you the similarity. We can use this as our token reading operation.
         </p>
-        <p>
-          In math form, it looks like this(where `x` has shape `(B,T,C)`):
+          <div className='language-img'>
+          <Latex>{`
+            \\begin{aligned}
+              Q &= \\text{Linear}(C, C) \\\\
+              K &= \\text{Linear}(C, C) \\\\
+              q &= Q(x) \\\\
+              k &= K(x) \\\\
+              A &= \\text{mask}\\left(\\frac{Q \\cdot K^T}{\\sqrt{\\text{dim}(Q)}}\\right)
+            \\end{aligned}
+          `}</Latex>
+          </div>
 
-          <Latex>
-          Q = \text{Linear} (C,C) \\
-          K = \text{Linear} (C,C) \\
-
-          q = Q(x) \\
-          k = K(x) \\ 
-
-          A = \text{mask}(\frac{(Q \cdot K^T)}{\sqrt{Q_\text{dim}}})
-          </Latex>
-        </p>
         <p>We implement it in code form here</p>
         <Code code={snippets['self_attention.py']} />
         <h2>From One to Multiple Heads</h2>
