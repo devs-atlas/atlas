@@ -38,6 +38,10 @@ export default function VQGan({ meta, snippets }: PostProps) {
       {/*<SelfAttentionDiagram />*/}
       <div className={garamond.className}>
         <p>
+          Caution: This article uses a stream-of-consciousness approach that emphasizes intuition and repeated explanations. While written pieces sometimes miss addressing subtle, lingering questions, I aim to clarify through these methods.
+          For a quick overview, each section concludes with a "Recap" and a GPT-4-generated summary. Though GPT-4 excels at dense summarization compared to humans, I recommend not relying solely on it for grasping new concepts in this case. I've verified the accuracy of each summary.
+        </p>
+        <p>
           Even though the transformer is used to generate images in VQ-GAN, it's
           helpful to understand it on its own. Transformers have by-far the most
           quality material online in the NLP domain, so first presenting it in
@@ -77,6 +81,13 @@ export default function VQGan({ meta, snippets }: PostProps) {
           much longer formula.
         </p>
         <h2>Training</h2>
+        <Image
+          className="language-img"
+          src="/posts/vqgan/nopeeking.svg"
+          alt="Graph of word embeddings versus dimensions"
+          width={500}
+          height={500}
+        /> 
         <p>
           But ChatGPT is already trained. When the model is learning to generate sentences(training), it performs a `sequence of words(x)-&gt;sequence of words(y)`
           mapping, not just `sequence of words(x) -&gt; word(y)`.
@@ -86,6 +97,8 @@ export default function VQGan({ meta, snippets }: PostProps) {
           </p>
           <p>
           The input sequence for one training sample is `["Hi", "my", "name", "is"]` and the output sequence is `["my", "name", "is", "John"]`.
+          By output sequence(also known as `y`), I mean that this is the expected output sequence.
+          The model is trying to predict `y` given `x`, but it might not get it right.
 
           `x` and `y` are the same length, so it's really like mapping `Hi-&gt;my`,
           `my-&gt;name`, `name-&gt;is`, and so on. This is an essential insight, because that's what GPTs are doing at their core. 
@@ -96,18 +109,12 @@ export default function VQGan({ meta, snippets }: PostProps) {
           prediction using the previous context(just `Hi` in this case). `my` 
           cannot interact with `name`, it only has access to `Hi my`.
         </p>
-        <Image
-          className="language-img"
-          src="/posts/vqgan/nopeeking.svg"
-          alt="Graph of word embeddings versus dimensions"
-          width={500}
-          height={500}
-        /> 
+        
         <p>
           As a result, when we pass in one training sentence into a GPT, it's like the model is
-          outputting several next-word predictions all at once. `Hi` is doing its best to figure out `my`
-          The model is making the next-sequence predictions at once. This is a lot more
-          efficient than just comparing the last generated token since we can now compare
+          outputting several next-word predictions all at once. `Hi` is being used to map `Hi` to the next token, which is `my` in reality.
+          `Hi my` is being used to map `my` to the next token, which is `is` in reality.
+          This is a lot more efficient than just comparing the last generated token since we can now compare
           the prediction at every single place in the sentence to the true value
           instead of only the last.
         </p>
@@ -155,17 +162,10 @@ export default function VQGan({ meta, snippets }: PostProps) {
         </ol>
         <p>
           I'll start with the first and tackle the next one after, since 1 is a
-          more `essential/fundamental` question to language modeling generally,
+          more essential/fundamental question to language modeling generally,
           while two and three are more GPT-specific.
         </p>
         <h1>Text to numbers and back</h1>
-        <p>
-          I've mentioned mapping words to other words so far, but obviously this
-          is a big abstraction. No deep learning model can actually take in a
-          string directly as input and process that through a neural network.
-          Instead, we need an internal representation for language. The
-          solution? Tokenization and embeddings.
-        </p>
         <Image
           className="language-img"
           src="/posts/vqgan/texttonumbersnoshape.svg"
@@ -173,6 +173,13 @@ export default function VQGan({ meta, snippets }: PostProps) {
           width={500}
           height={500}
         />
+        <p>
+          I've mentioned mapping words to other words so far, but obviously this
+          is a big abstraction. No deep learning model can actually take in a
+          string directly as input and process that through a neural network.
+          Instead, we need an internal representation for language. The
+          solution? Tokenization and embeddings.
+        </p>
         <h2>Tokenization</h2>
         <p>
           Tokenization refers to transforming an input string into a discrete sequence of word-tokens.
@@ -181,15 +188,15 @@ export default function VQGan({ meta, snippets }: PostProps) {
             <li>Build a vocabulary from the initial training corpus</li>
             <li>Use that vocabulary to break up the input string into a sequence of tokens</li>
           </ol>
-          
           </p>
         <p>
           Before breaking up a sentence into a sequence of tokens, we need to identify
           the list of possible tokens, or our "vocabulary". There are many ways to do this:
           <ul>
-            <li>Character level - get all unique characters from training corpus and assign each an integer</li>
-            <li>Sub-word level - use an algorithm like Byte-Pair Tokenization to identify common sub-words</li>
-            <li>Sentence level - split entire sentences into tokens using another pre-trained model</li>
+            <li>Character level - get all unique characters from training corpus and assign each an integer
+              (`Hello my -&gt; [H,e,l,l,o, , m, y]`)</li>
+            <li>Sub-word level - use an algorithm like Byte-Pair Tokenization to identify common sub-words(`Hello my -&gt; [Hello, , my]`)</li>
+            <li>Sentence level - split entire sentences into tokens using another pre-trained model(`Hello my -&gt; [Hello my]`)</li>
           </ul>
         </p>
         <p>
@@ -335,7 +342,7 @@ export default function VQGan({ meta, snippets }: PostProps) {
         <Code code={snippets['losses_1.py']} />
         {/* TODO: show image in between */}
         <p>... and generate</p>
-        <Code code={snippets['generate_simple.py']} />
+        <Code code={snippets['generate_sequence_simple.py']} />
         {/* TODO: add pre code showing output here */}
         <p>
           An interesting
@@ -355,13 +362,12 @@ export default function VQGan({ meta, snippets }: PostProps) {
           components are located in between the embedding and unembedding layer.
           We've got the outer shell of a language model, but the inner
           components(what makes GPT special) will allow for reading prior
-          context. Thankfully, these components aren't too hard to wrap your
-          head around given the framework that I've laid out so far. Once
-          embedded, the `(B,T,C)` input is fed through a series of residually
-          stacked "transformer layers". Each transformer layer is identical in
-          architecture. These transformers layers are "residual" because they do
+          context. Once embedded, the `(B,T,C)` input is fed through a series of residually
+          stacked "transformer layers". Each transformer layer is identical. These transformers layers are "residual" because they do
           not replace the signal like `new_x = transformer_layer(x)`, but `x = x
-          + transformer_layer(x)`. Inside the transformer layer are two
+          + transformer_layer(x)`.
+          </p><p>
+          Inside the transformer layer are two
           components, an attention layer and an MLP layer. First, the attention
           layer is added onto the original, `x = x + attention(x)`, and then `x
           = x + mlp(x)`. If you expand this out, it looks like `x = x +
@@ -384,7 +390,13 @@ export default function VQGan({ meta, snippets }: PostProps) {
           of the model throughout many layers. Consequently, layers can
           communicate and perform functions across each other.
         </p>
-
+        <Image
+          className="language-img"
+          src="/posts/vqgan/gpt.svg"
+          alt="Graph of word embeddings versus dimensions"
+          width={500}
+          height={500}
+        />
         <h2>Attention</h2>
         <p>
           In GPTs, attention acts as the primary mechanism for contextual understanding.
@@ -414,6 +426,13 @@ export default function VQGan({ meta, snippets }: PostProps) {
           softmaxes to get probabilities. The entire reading process is summed up in the attention table. Each row corresponds
           to how much of the other token vectors we want to copy into the current.
         </p>
+        <Image
+          className="language-img"
+          src="/posts/vqgan/attentionpattern.svg"
+          alt="Graph of word embeddings versus dimensions"
+          width={500}
+          height={500}
+        /> 
         <p>
           So the square grid that I referred to is actually a real thing -- the attention pattern. The attention pattern, `A`, is responsible for all the reading operations from other tokens. As a result, this is where we implemement the masking operation so our model can only look in the past. All that's needed is just a lower-triangular mask.
           The way you get that singular relevancy number between the `Q` and `K` vectors is by performing a dot-product comparison between the broadcasted vectors of all the other tokens in the sequence to the current token. Both `Q` and `K` have shape `(B,T,C)`, so to get the proper behavior of multiplication between each feature vector, the dot product is performed with the tranpose of `K`. `Q(B,T,C) @ K(B,C,T)--&gt;A(B,T,T)`. This is the square grid of tokens I wasreferring to. We can perform this kind of multiplication in PyTorch and the batch dimension is ignored so each query token vector is being multiplied by every other key token vector.
@@ -498,7 +517,7 @@ export default function VQGan({ meta, snippets }: PostProps) {
         <p>Let's use the same training loop as before but use a small GPT.</p>
         {/* TODO: missing plt.plot(losses screenshot) */}
         <Code code={snippets['losses_2.py']} />
-        <Code code={snippets['generate_sequence.py']} />
+        <Code code={snippets['generate_sequence_gpt.py']} />
         <p>It might not look great, but compare that to the output of an untrained model. It's clearly picking up on things
           like the rarity of certain special characters and commonality of newlines.</p>
         <Code code={snippets['random_output.py']} />
