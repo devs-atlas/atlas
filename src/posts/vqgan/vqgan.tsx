@@ -63,7 +63,7 @@ export default function VQGan({ meta, snippets }: PostProps) {
         <h2>Auto-regressive Generation</h2>
         <p>
           
-          During generation(like when you use ChatGPT), language models take in a sequence
+          During generation, language models take in a sequence
           of words as context and use that to auto-regressively generate a convincing
           continuation of the sentence. Auto-regressive means that we have some initial
           context in the form of a sequence of
@@ -89,43 +89,52 @@ export default function VQGan({ meta, snippets }: PostProps) {
           height={500}
         /> 
         <p>
-          But ChatGPT is already trained. When the model is learning to generate sentences(training), it performs a `sequence of words(x)-&gt;sequence of words(y)`
-          mapping, not just `sequence of words(x) -&gt; word(y)`.
-
-          Let's say we have the sentence `Hi my name is John`. When we break it into a sequence to be fed into the
-          language model, the string is split into `["Hi", "my", "name", "is", "John"]`.
+          But, if we don't want random outputs, we first need to train the model. When the model is learning to generate
+          sentences(training), it performs a `sequence of words(x)-&gt;sequence of words(y)` mapping, not just
+          `sequence of words(x) -&gt; word(y)`. Let's say we have the sentence `I am self aware`. When we break it into a sequence to be fed into the
+          language model, the string is split into `["I", "am", "self", "aware"]`.
+          The input sequence for one training sample is `["I", "am", "self"]` and the true output sequence is `["am", "self", "aware"]`.
+          The predicted sequence of words `y` is being compared to the true output sequence to see how well it did.
+          The loss being used to compare the predictions to truth is known as cross-entropy loss.
+          I will give the details of this later, but for now, just know that the model is trying to minimize this loss number through backpropogation.
+          Models like ChatGPT get their intelligence from a huge amount of this training, along with some supervised fine-tuning and RLHF as a cherry on top.
           </p>
           <p>
-          The input sequence for one training sample is `["Hi", "my", "name", "is"]` and the output sequence is `["my", "name", "is", "John"]`.
-          By output sequence(also known as `y`), I mean that this is the expected output sequence.
-          The model is trying to predict `y` given `x`, but it might not get it right.
+          
+          Now I need to make an important observation.
+          I think this fact goes over many people's heads when they first learn about GPTs,
+          but it is critical to understanding how they work.
 
-          `x` and `y` are the same length, so it's really like mapping `Hi-&gt;my`,
-          `my-&gt;name`, `name-&gt;is`, and so on. This is an essential insight, because that's what GPTs are doing at their core. 
-          They are mapping each word in a sequence to the next word in the sequence directly. 
-        </p>
-        <p>
-          GPTs are set-up in a clever way such that, at the position of `Hi`, the model can only make it's 
-          prediction using the previous context(just `Hi` in this case). `my` 
-          cannot interact with `name`, it only has access to `Hi my`.
+          The input `x` and output `y` are the same length, so it's really like we're doing a one to one mapping.
+          Going back to the previous example, `I` is being mapped to `am`, `am` is being mapped to `self`, and so on.
+          GPTs, at their core, are performing a one-to-one mapping. 
+          </p><p>
+          I was confused with this part of GPTs at first because it seemed to me that the model would just be able to peek ahead at the answer.
+          For predicting `am` from `I`, couldn't the model simply take the value `am` from ahead of it in the input and trivially find the answer?
+          In this case, the only place where the model would actually have to make a prediction is the last word in `x`.
+
+          The one-to-one mapping is the reason why the model can't do this, which leads me to a fundamentally new way of looking at GPTs.
+          They're very different from typical deep models, where the entire input sequence is processed with information from the entire sequence at once.
+          In GPTs, each token in the sequence is truly being processed independently, but it has the ability to perform simple read/write operations between itself and the previous tokens in the sequence.
+          There's a lot of parallel, similar computation happening across tokens individually, with reading and writing happening between tokens. 
+          Surprisingly, this simple operation allows for huge scalabalility, which people didn't expect before OpenAI's GPT series.
+          You'll soon see how the reading/writing is done (answer: attention), but just have that picture clear in your mind.
         </p>
         
         <p>
-          As a result, when we pass in one training sentence into a GPT, it's like the model is
-          outputting several next-word predictions all at once. `Hi` is being used to map `Hi` to the next token, which is `my` in reality.
-          `Hi my` is being used to map `my` to the next token, which is `is` in reality.
-          This is a lot more efficient than just comparing the last generated token since we can now compare
-          the prediction at every single place in the sentence to the true value
-          instead of only the last.
+          A nice consequence of the model predicting token-by-token is that training is extremely efficient.
+          Every time we pass in an input sequence with `T` characters, we get `T` predictions and `T` opportunities for the model to learn.
         </p>
         <p>
-          When I said previously that language model do a `sequence of
-          words-&gt;word` mapping when generating new sentences, that wasn't
+          When I said previously that, during generation, language models do a `sequence of
+          words-&gt;word` mapping, that wasn't
           entirely true. It's still doing `sequence of words(x)-&gt;sequence of
           words(y)`, except we only care about the last word in the output
-          sequence `y`. That's because the prior information about the models
+          sequence `y`. The rest are just discarded. That's because the prior information about the models
           predictions for the shifted-over version aren't needed in the context
           of auto-regressive sampling.
+          
+          This is an unfortunate consequence for the efficiency of generation, but it's a worthy tradeoff for the efficiency of training.
         </p>
         <h3>Recap</h3>
         <Image
@@ -142,19 +151,17 @@ export default function VQGan({ meta, snippets }: PostProps) {
           to the true shifted over version of the input at every single
           position. In order to make these predictions for each word in the
           sequence, the model uses itself and the words before it. At the
-          position `name` in `Hi my name is John`, the model is mapping `name`
-          to `is` using the context of `Hi my name`.
+          position `self` in the input `I am self aware`, the model is mapping `self`
+          to `aware` using the context of `Hi my name`.
+          The context is mixed using simple reading and writing operations between tokens,
+          with all processes occuring individually token per token.
         </p>
         <p>
-          So now you understand how a transformer works at a high level and how
-          it predicts the next word for each word in the sequence while only
-          using itself and the words before it. I've left a lot of details up in
-          the air so far, but most of the questions that you have about this
-          will hopefully be solved as we try to answer the following questions:
+          I've left a lot of details intentionally vague so far, but most of the questions that you have about this
+          will hopefully be solved as we try to answer the following two questions:
         </p>
         <ol>
           <li>How is text represented as numbers by the model?</li>
-          <li>Why can't the model look forward to just cheat the answer?</li>
           <li>
             How does the model include previous words(not just itself) as
             context?
@@ -163,7 +170,7 @@ export default function VQGan({ meta, snippets }: PostProps) {
         <p>
           I'll start with the first and tackle the next one after, since 1 is a
           more essential/fundamental question to language modeling generally,
-          while two and three are more GPT-specific.
+          while two is more GPT-specific.
         </p>
         <h1>Text to numbers and back</h1>
         <Image
@@ -194,9 +201,9 @@ export default function VQGan({ meta, snippets }: PostProps) {
           the list of possible tokens, or our "vocabulary". There are many ways to do this:
           <ul>
             <li>Character level - get all unique characters from training corpus and assign each an integer
-              (`Hello my -&gt; [H,e,l,l,o, , m, y]`)</li>
-            <li>Sub-word level - use an algorithm like Byte-Pair Tokenization to identify common sub-words(`Hello my -&gt; [Hello, , my]`)</li>
-            <li>Sentence level - split entire sentences into tokens using another pre-trained model(`Hello my -&gt; [Hello my]`)</li>
+              (`I am self aware-&gt; [I, ,a,m, ,s,e,l,f, ,a,w,a,r,e]`)</li>
+            <li>Sub-word level - use an algorithm like Byte-Pair Tokenization to identify common sub-words(`Hello my -&gt; [I, , am, ,self, ,aware]`)</li>
+            <li>Sentence level - split entire sentences into tokens using another pre-trained model(`I am self aware -&gt; [I am self aware]`)</li>
           </ul>
         </p>
         <p>
@@ -248,12 +255,11 @@ export default function VQGan({ meta, snippets }: PostProps) {
           across tokens. Remember when I said that when a GPT is doing a
           `sequence(x)-&gt;sequence(y)` mapping, it's really like each token in
           `x` is being mapped to the `y` in the same position. The position-wise
-          layer is the reason for this. Now I can answer question 2 from above.
-          "Why can't the model look forward to cheat the answer?" It's simply
-          because there is no mechanism to do so. The embedding operates on each
-          token independently, and the unembedding acts on each token vector
-          independently. The ability to use context from before was an add-on
-          made by the transformer.
+          layer is the reason for this. To loop back to the question of "why can't the model look forward to cheat the answer?"
+          It's simply because there is no mechanism to do so.
+          
+          The embedding operates on each token independently, and the unembedding acts on each token vector
+          independently. The ability to use context comes from some internal components of the GPT, but th.
         </p>
         <p>
           At this point, assuming you understand everything explained to this
