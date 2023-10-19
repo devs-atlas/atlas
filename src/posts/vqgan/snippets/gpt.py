@@ -6,7 +6,7 @@ class GPT(LanguageModel):
         self.transformer_layers = nn.ModuleList(
             (TransformerLayer(embedding_dim, num_heads) for _ in range(num_layers))
         )
-        self.pos_embedding = nn.Embedding(embedding_dim,max_context_length).to("mps")
+        self.pos_embedding = nn.Embedding(max_context_length, embedding_dim).to("mps")
         self.init_drop = nn.Dropout(0.05)
         self.final_norm = nn.LayerNorm(embedding_dim)
 

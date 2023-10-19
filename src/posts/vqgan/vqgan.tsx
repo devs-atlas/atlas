@@ -108,7 +108,8 @@ export default function VQGan({ meta, snippets }: PostProps) {
           The input `x` and output `y` are the same length, so it's really like we're doing a one to one mapping.
           Going back to the previous example, `I` is being mapped to `am`, `am` is being mapped to `self`, and so on.
           GPTs, at their core, are performing a one-to-one mapping. 
-          </p><p>
+        </p>
+        <p>
           I was confused with this part of GPTs at first because it seemed to me that the model would just be able to peek ahead at the answer.
           For predicting `am` from `I`, couldn't the model simply take the value `am` from ahead of it in the input and trivially find the answer?
           In this case, the only place where the model would actually have to make a prediction is the last word in `x`.
@@ -152,7 +153,7 @@ export default function VQGan({ meta, snippets }: PostProps) {
           position. In order to make these predictions for each word in the
           sequence, the model uses itself and the words before it. At the
           position `self` in the input `I am self aware`, the model is mapping `self`
-          to `aware` using the context of `Hi my name`.
+          to `aware` using the context of `I am self`.
           The context is mixed using simple reading and writing operations between tokens,
           with all processes occuring individually token per token.
         </p>
@@ -344,7 +345,20 @@ export default function VQGan({ meta, snippets }: PostProps) {
           embed to unembed language model, let's build it...
         </p>
         <Code code={snippets['language_model.py']} />
-        <p>... and train</p>
+        <h3>How does it learn?</h3>
+        <p>
+
+          At this point, I need to explain the training process of the model.
+          Remember how our output is the predicted shifted-sequence and we are comparing that to the actual.
+          The output has shape `(B,T,vocab_size)` and the ground truth has shape `(B,T)`. To get a performance metric from this, we
+          want to compare using cross-entropy loss.
+
+          Cross-entropy loss is a way of measuring the difference between two probability distributions.
+        </p>
+        <p>
+
+        </p>
+
         <Code code={snippets['losses_1.py']} />
         {/* TODO: show image in between */}
         <p>... and generate</p>
@@ -497,7 +511,7 @@ export default function VQGan({ meta, snippets }: PostProps) {
           height={500}
         />
         <p>
-          OK, last thing. Since we're including prior context, we need some way
+          Since we're including prior context, we need some way
           of telling the model *where* it's copying information from when doing
           attention. Attention does not have any notion of position inherintly.
           There are many more complex solutions out there but learned positional

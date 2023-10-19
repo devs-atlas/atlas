@@ -19,10 +19,10 @@ export type Snippets = {
 
 export const postMeta = new Map<string, PostMeta>()
 postMeta.set('vqgan', {
-  title: 'VQ-GAN From the Bottom Up',
+  title: 'GPT for ~Layman',
   id: 'vqgan',
   description:
-    'A foundational, scalable, generative architecture for unstructured data.',
+    'A fresh look',
   date: '2023-02-10',
   image: {
     src: '/posts/vqgan/preview.png',
