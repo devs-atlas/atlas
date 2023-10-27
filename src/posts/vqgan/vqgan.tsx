@@ -433,14 +433,14 @@ export default function VQGan({ meta, snippets }: PostProps) {
         <p>
           Reading information is similar to a data-retrieval process.
           We want each token to look to its left and consider which previous words are relevant to the understanding of
-          the current token in some way. In the end, this should look like a probability distribution(all in between 0 and
+          the current token in some way. Mathematically, this could look like a probability dis In the end, this should look like a probability distribution(all in between 0 and
           1, sum to 1) over all the tokens previous and including the current token. These probabilities reflect what
           proportion of the relevant information from the other token that we want to copy into our token.</p>
           
         <p>
           To do so, we want each token in the sequence, including itself, to "broadcast" a certain vector out that is
           supposed to represent its meaning that is relevant to the current token. It's called `K`. The current token
-          then "broadcasts" its own vector to establish what information it's looking for, `Q`. At every position, every
+          then "broadcasts" its own vector to establish what information it's looking for, `Q`. At every position(behind the current-token), every
           other token is deciding how relevant it is to the current token in this process. Attention uses the dot-product
           between the broadcasted `Q` vector and all corresponding `K` vectors to obtain a relevancy score value and then
           softmaxes to get probabilities. The entire reading process is summed up in the attention table. Each row corresponds
@@ -454,7 +454,10 @@ export default function VQGan({ meta, snippets }: PostProps) {
           height={500}
         /> 
         <p>
-          So the square grid that I referred to is actually a real thing -- the attention pattern. The attention pattern, `A`, is responsible for all the reading operations from other tokens. As a result, this is where we implemement the masking operation so our model can only look in the past. All that's needed is just a lower-triangular mask.
+          So the square grid that I referred to is a real thing -- the attention pattern. The attention pattern, `A`, is responsible for all the reading operations from other tokens.
+          There are no other components in a GPT which allow for information movement between tokens.
+          As a result, this is where we implemement the masking operation so our model can only look in the past.
+          All that's needed is just a lower-triangular mask(meaning we set all the values representing future tokens to `-INF`).
           The way you get that singular relevancy number between the `Q` and `K` vectors is by performing a dot-product comparison between the broadcasted vectors of all the other tokens in the sequence to the current token. Both `Q` and `K` have shape `(B,T,C)`, so to get the proper behavior of multiplication between each feature vector, the dot product is performed with the tranpose of `K`. `Q(B,T,C) @ K(B,C,T)--&gt;A(B,T,T)`. This is the square grid of tokens I wasreferring to. We can perform this kind of multiplication in PyTorch and the batch dimension is ignored so each query token vector is being multiplied by every other key token vector.
           The linear layers take the function of aligning to whatever operation they're put in. In this NLP, and more broadly attention context, the operation is that the `Q` vector should be what information we want from the other tokens, and the `K` vector should be what information the other vector has. Dot-producting them together along the feature vector dimension gives you the similarity. We can use this as our token reading operation.
         </p>

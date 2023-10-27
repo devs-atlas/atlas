@@ -19,7 +19,7 @@ export type Snippets = {
 
 export const postMeta = new Map<string, PostMeta>()
 postMeta.set('vqgan', {
-  title: 'GPT for ~Layman',
+  title: 'GPT for All',
   id: 'vqgan',
   description:
     'A fresh look',
